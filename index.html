@@ -236,46 +236,11 @@
   .empty-state .emoji { font-size: 36px; margin-bottom: 12px; }
   .empty-state p { font-size: 14px; line-height: 1.6; }
 
-  /* ===== TOP 20 TAB ===== */
-  #tab-top20 { padding: 0 20px; display: none; }
 
-  .top20-toggle {
-    display: flex; gap: 8px; margin-bottom: 20px;
-  }
-  .toggle-btn {
-    padding: 7px 16px; border-radius: 100px;
-    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
-    cursor: pointer; transition: all 0.2s;
-    border: 1.5px solid var(--border); background: var(--white); color: var(--mid);
-  }
-  .toggle-btn.active { background: var(--pink); color: white; border-color: var(--pink); }
 
-  .leaderboard { display: flex; flex-direction: column; gap: 8px; }
 
-  .lb-item {
-    background: var(--white); border-radius: 14px;
-    padding: 14px 16px; box-shadow: var(--card-shadow);
-    display: flex; align-items: center; gap: 14px;
-    animation: fadeUp 0.25s ease both;
-  }
-  .lb-rank {
-    font-family: 'DM Serif Display', serif;
-    font-size: 18px; color: var(--mid); width: 28px;
-    text-align: center; flex-shrink: 0;
-  }
-  .lb-rank.gold { color: #c9a227; }
-  .lb-rank.silver { color: #9e9e9e; }
-  .lb-rank.bronze { color: #cd7f32; }
 
-  .lb-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--ink); }
-  .lb-count {
-    font-family: 'DM Serif Display', serif;
-    font-size: 22px; color: var(--pink); flex-shrink: 0;
-  }
-  .lb-count-label { font-size: 11px; color: var(--mid); text-align: right; }
 
-  .lb-bar-wrap { width: 80px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
-  .lb-bar { height: 100%; background: linear-gradient(90deg, #f4a8b4, var(--pink)); border-radius: 3px; }
 
   .spinner {
     display: inline-block; width: 14px; height: 14px;
@@ -311,14 +276,6 @@
     <button class="signout-btn" onclick="doLogout()">Sign out</button>
   </div>
 
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('search')">
-      <span class="tab-icon">🔍</span>Search Records
-    </button>
-    <button class="tab" onclick="switchTab('top20')">
-      <span class="tab-icon">🏆</span>Top 20 Volunteers
-    </button>
-  </div>
 
   <!-- SEARCH TAB -->
   <div id="tab-search">
@@ -331,13 +288,6 @@
     <div id="search-results"></div>
   </div>
 
-  <!-- TOP 20 TAB -->
-  <div id="tab-top20">
-    <div class="top20-toggle">
-      <button class="toggle-btn active" id="btn-total" onclick="switchLeaderboard('total')">All Time</button>
-      <button class="toggle-btn" id="btn-year" onclick="switchLeaderboard('year')">This Year</button>
-    </div>
-    <div class="leaderboard" id="leaderboard"></div>
   </div>
 </div>
 
@@ -352,8 +302,8 @@ const CURRENT_YEAR      = new Date().getFullYear().toString();
 
 let allNames     = [];
 let selectedName = null;
-let allRecords   = []; // cache for leaderboard
-let activeLeaderboard = 'total';
+
+
 
 // ---- Login ----
 document.getElementById('pw-input').addEventListener('keydown', e => {
@@ -388,7 +338,7 @@ async function initApp() {
 async function loadNames() {
   try {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLE}?select=Name&Attended=eq.Yes`,
+      `${SUPABASE_URL}/rest/v1/${TABLE}?select=Name&Attended=eq.True`,
       { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
     );
     const data = await res.json();
@@ -397,20 +347,6 @@ async function loadNames() {
   } catch(e) { console.warn('Name load failed', e); }
 }
 
-// ---- Tab switching ----
-function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-search').style.display = 'none';
-  document.getElementById('tab-top20').style.display  = 'none';
-
-  if (tab === 'search') {
-    document.querySelectorAll('.tab')[0].classList.add('active');
-    document.getElementById('tab-search').style.display = 'block';
-  } else {
-    document.querySelectorAll('.tab')[1].classList.add('active');
-    document.getElementById('tab-top20').style.display = 'block';
-    loadLeaderboard();
-  }
 }
 
 // ---- Name search dropdown ----
@@ -448,7 +384,7 @@ async function loadVolunteerRecords(name) {
 
   try {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLE}?Name=eq.${encodeURIComponent(name)}&Attended=eq.Yes&order=Date.desc&select=Event,Date,Year,Beneficiary`,
+      `${SUPABASE_URL}/rest/v1/${TABLE}?Name=eq.${encodeURIComponent(name)}&Attended=eq.True&order=Date.desc&select=Event,Date,Year,Beneficiary`,
       { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -521,68 +457,10 @@ function renderVolunteerRecords(name, records) {
   `;
 }
 
-// ---- Leaderboard ----
-async function loadLeaderboard() {
-  const el = document.getElementById('leaderboard');
-  if (allRecords.length > 0) { renderLeaderboard(); return; } // use cache
-  el.innerHTML = `<div class="loading-row"><span class="spinner"></span>Loading…</div>`;
-  try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLE}?select=Name,Year&Attended=eq.Yes`,
-      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
     );
     allRecords = await res.json();
-    renderLeaderboard();
   } catch(e) {
-    el.innerHTML = `<div class="empty-state"><p>Could not load leaderboard.</p></div>`;
   }
-}
-
-function switchLeaderboard(mode) {
-  activeLeaderboard = mode;
-  document.getElementById('btn-total').classList.toggle('active', mode === 'total');
-  document.getElementById('btn-year').classList.toggle('active',  mode === 'year');
-  renderLeaderboard();
-}
-
-function renderLeaderboard() {
-  const el = document.getElementById('leaderboard');
-  const counts = {};
-
-  allRecords.forEach(r => {
-    const name = r.Name?.trim();
-    if (!name) return;
-    if (activeLeaderboard === 'year' && String(r.Year) !== CURRENT_YEAR) return;
-    counts[name] = (counts[name] || 0) + 1;
-  });
-
-  const sorted = Object.entries(counts)
-    .sort((a,b) => b[1] - a[1])
-    .slice(0, 20);
-
-  if (!sorted.length) {
-    el.innerHTML = `<div class="empty-state"><p>No data for this period yet.</p></div>`;
-    return;
-  }
-
-  const maxVal = sorted[0][1];
-  el.innerHTML = sorted.map(([name, cnt], i) => {
-    const rank     = i + 1;
-    const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
-    const rankDisplay = rank <= 3 ? ['🥇','🥈','🥉'][rank-1] : rank;
-    return `
-      <div class="lb-item" style="animation-delay:${Math.min(i*0.03,0.5)}s">
-        <div class="lb-rank ${rankClass}">${rankDisplay}</div>
-        <div class="lb-name">${name}</div>
-        <div>
-          <div class="lb-bar-wrap"><div class="lb-bar" style="width:${Math.round(cnt/maxVal*100)}%"></div></div>
-        </div>
-        <div>
-          <div class="lb-count">${cnt}</div>
-          <div class="lb-count-label">events</div>
-        </div>
-      </div>`;
-  }).join('');
 }
 
 // ---- Helpers ----
