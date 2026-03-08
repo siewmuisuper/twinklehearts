@@ -28,66 +28,9 @@
     min-height: 100vh;
   }
 
-  /* ===== LOGIN ===== */
-  #login-screen {
-    min-height: 100vh;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    padding: 32px 20px;
-    background: var(--bg);
-  }
-
-  .login-logo { font-size: 44px; margin-bottom: 10px; }
-  .login-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 30px; color: var(--ink);
-    text-align: center; margin-bottom: 4px;
-  }
-  .login-sub { font-size: 14px; color: var(--mid); text-align: center; margin-bottom: 36px; }
-
-  .login-card {
-    background: var(--white);
-    border-radius: 20px;
-    padding: 32px 28px;
-    width: 100%; max-width: 380px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-  }
-
-  .field-label {
-    display: block; font-size: 11px; font-weight: 600;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--mid); margin-bottom: 8px;
-  }
-
-  .login-card input {
-    width: 100%; padding: 13px 16px;
-    border: 1.5px solid var(--border); border-radius: 12px;
-    font-family: 'DM Sans', sans-serif; font-size: 15px;
-    color: var(--ink); background: #faf8f5; outline: none;
-    transition: border-color 0.2s; margin-bottom: 18px;
-  }
-  .login-card input:focus { border-color: var(--pink); }
-
-  .login-btn {
-    width: 100%; padding: 14px;
-    background: var(--pink); color: white; border: none;
-    border-radius: 12px; font-family: 'DM Sans', sans-serif;
-    font-size: 15px; font-weight: 600; cursor: pointer;
-    transition: background 0.2s;
-  }
-  .login-btn:hover { background: #a93226; }
-  .login-btn:disabled { background: #e8a9a3; cursor: not-allowed; }
-
-  .login-error {
-    margin-top: 12px; padding: 10px 14px;
-    background: #fdf0ee; color: var(--pink);
-    border-radius: 8px; font-size: 13px; font-weight: 500;
-    text-align: center; display: none;
-  }
-  .login-error.show { display: block; }
 
   /* ===== APP ===== */
-  #app-screen { display: none; max-width: 680px; margin: 0 auto; padding: 0 0 60px; }
+  #app-screen {  max-width: 680px; margin: 0 auto; padding: 0 0 60px; }
 
   /* Header */
   .app-header {
@@ -255,25 +198,10 @@
 </head>
 <body>
 
-<!-- ===== LOGIN ===== -->
-<div id="login-screen">
-  <div class="login-logo">💗</div>
-  <h1 class="login-title">Twinkle Hearts</h1>
-  <p class="login-sub">Volunteer attendance records</p>
-
-  <div class="login-card">
-    <label class="field-label">Password</label>
-    <input type="password" id="pw-input" placeholder="Enter password" autocomplete="off">
-    <button class="login-btn" id="login-btn" onclick="doLogin()">Enter</button>
-    <div class="login-error" id="login-error">Incorrect password. Please try again.</div>
-  </div>
-</div>
-
-<!-- ===== APP ===== -->
+<!-- APP -->
 <div id="app-screen">
   <div class="app-header">
     <div class="app-logo">Twinkle <span>Hearts</span> 💗</div>
-    <button class="signout-btn" onclick="doLogout()">Sign out</button>
   </div>
 
 
@@ -295,7 +223,6 @@
 // ============================================================
 const SUPABASE_URL      = 'https://vkmafkzoocdlkgjubwgb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrbWFma3pvb2NkbGtnanVid2diIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NTUxODAsImV4cCI6MjA4ODUzMTE4MH0.rNDMOJNzWQprzUhm5yROLQIFVbBh7-BRQdGk5b8F17Y';
-const APP_PASSWORD      = 'TwinkleHearts2024';
 const TABLE             = 'TwinkleHearts_Attendance2026';
 const CURRENT_YEAR      = new Date().getFullYear().toString();
 // ============================================================
@@ -305,31 +232,10 @@ let selectedName = null;
 
 
 
-// ---- Login ----
-document.getElementById('pw-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin();
-});
 
-function doLogin() {
-  const pw  = document.getElementById('pw-input').value;
-  const err = document.getElementById('login-error');
-  err.classList.remove('show');
-  if (pw !== APP_PASSWORD) { err.classList.add('show'); return; }
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app-screen').style.display   = 'block';
-  initApp();
-}
-
-function doLogout() {
-  document.getElementById('app-screen').style.display   = 'none';
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('pw-input').value = '';
-  document.getElementById('name-input').value = '';
-  document.getElementById('search-results').innerHTML = '';
-  selectedName = null;
-}
 
 // ---- Init ----
+initApp();
 async function initApp() {
   await loadNames();
 }
