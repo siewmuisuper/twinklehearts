@@ -287,11 +287,11 @@ async function loadNames() {
   try {
     // Get distinct names via Supabase REST (fetch all attended=Yes rows, names only)
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLE}?select=name&attended=eq.Yes`,
+      `${SUPABASE_URL}/rest/v1/${TABLE}?select=Name&Attended=eq.Yes`,
       { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
     );
     const data = await res.json();
-    const nameSet = new Set(data.map(r => r.name?.trim()).filter(Boolean));
+    const nameSet = new Set(data.map(r => r.Name?.trim()).filter(Boolean));
     allNames = [...nameSet].sort((a,b) => a.localeCompare(b));
   } catch(e) {
     console.warn('Name load failed — check Supabase config', e);
@@ -374,7 +374,7 @@ async function doLogin() {
 // ---- Fetch from Supabase ----
 async function fetchAttendance(name) {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/${TABLE}?name=eq.${encodeURIComponent(name)}&attended=eq.Yes&order=date.desc&select=event,date,year`,
+    `${SUPABASE_URL}/rest/v1/${TABLE}?Name=eq.${encodeURIComponent(name)}&Attended=eq.Yes&order=Date.desc&select=Event,Date,Year`,
     { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
   );
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -390,8 +390,8 @@ function renderApp(name, records) {
 
   const total       = records.length;
   const currentYear = new Date().getFullYear().toString();
-  const thisYear    = records.filter(r => String(r.year) === currentYear).length;
-  const years       = [...new Set(records.map(r => r.year).filter(Boolean))];
+  const thisYear    = records.filter(r => String(r.Year) === currentYear).length;
+  const years       = [...new Set(records.map(r => r.Year).filter(Boolean))];
 
   document.getElementById('total-count').textContent    = total;
   document.getElementById('this-year-count').textContent = thisYear;
@@ -399,7 +399,7 @@ function renderApp(name, records) {
 
   // Returning volunteer — last event > 6 months ago
   if (total > 0) {
-    const lastDate   = new Date(records[0].date);
+    const lastDate   = new Date(records[0].Date);
     const monthsAgo  = (Date.now() - lastDate) / (1000*60*60*24*30);
     if (monthsAgo > 6) document.getElementById('returning-banner').classList.add('show');
   }
@@ -414,7 +414,7 @@ function renderApp(name, records) {
 
   // Year breakdown bars
   const byYear = {};
-  records.forEach(r => { if (r.year) byYear[r.year] = (byYear[r.year]||0) + 1; });
+  records.forEach(r => { if (r.Year) byYear[r.Year] = (byYear[r.Year]||0) + 1; });
   const maxVal = Math.max(...Object.values(byYear), 1);
   document.getElementById('year-bars').innerHTML =
     Object.entries(byYear)
@@ -442,10 +442,10 @@ function renderApp(name, records) {
       <div class="event-item" style="animation-delay:${Math.min(i*0.04,0.6)}s">
         <div class="event-dot"></div>
         <div class="event-info">
-          <div class="event-name">${r.event || '—'}</div>
-          <div class="event-date">${fmtDate(r.date)}</div>
+          <div class="event-name">${r.Event || '—'}</div>
+          <div class="event-date">${fmtDate(r.Date)}</div>
         </div>
-        <div class="event-year-tag">${r.year || ''}</div>
+        <div class="event-year-tag">${r.Year || ''}</div>
       </div>`
     ).join('');
   }
