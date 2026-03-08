@@ -183,7 +183,7 @@ loadNames();
 
 async function loadNames() {
   try {
-    const res  = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?select=Name&Attended=eq.True`, { headers: HEADERS });
+    const res  = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?select=Name&Attended=eq.true`, { headers: HEADERS });
     const data = await res.json();
     const set  = new Set(data.map(r => r.Name?.trim()).filter(Boolean));
     allNames   = [...set].sort((a, b) => a.localeCompare(b));
@@ -225,7 +225,7 @@ async function loadRecords(name) {
   el.innerHTML = `<div class="state-msg"><span class="spinner"></span>Loading…</div>`;
   try {
     const res     = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLE}?Name=eq.${encodeURIComponent(name)}&Attended=eq.True&order=Date.desc&select=Event,Date,Year,Beneficiary`,
+      `${SUPABASE_URL}/rest/v1/${TABLE}?Name=eq.${encodeURIComponent(name)}&Attended=eq.true&order=Date.desc&select=Event,Date,Year,Beneficiary`,
       { headers: HEADERS }
     );
     const records = await res.json();
