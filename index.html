@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Twinkle Hearts — My Attendance</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #e8556a;
+    --pink-light: #fde8ec;
+    --pink-mid: #f4a8b4;
+    --cream: #fffaf8;
+    --ink: #2d2229;
+    --mid: #8a7880;
+    --light: #f7f0f2;
+    --gold: #c9853a;
+    --border: #edd8dc;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Nunito',sans-serif; background:var(--cream); color:var(--ink); min-height:100vh; }
+
+  /* ===== LOGIN ===== */
+  #login-screen {
+    min-height:100vh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; padding:32px 24px;
+    background:linear-gradient(160deg,#fff0f3 0%,#fffaf8 60%,#fff5e8 100%);
+  }
+  .heart-logo { font-size:52px; margin-bottom:10px; animation:pulse 2.5s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+  .login-title { font-family:'Playfair Display',serif; font-size:34px; color:var(--pink); text-align:center; margin-bottom:4px; }
+  .login-sub { font-size:14px; color:var(--mid); text-align:center; margin-bottom:36px; }
+
+  .login-box {
+    background:white; border-radius:24px; padding:36px 32px;
+    width:100%; max-width:400px;
+    box-shadow:0 12px 48px rgba(232,85,106,0.13);
+  }
+  .field-label {
+    display:block; font-size:11px; font-weight:800;
+    letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--mid); margin-bottom:8px;
+  }
+  .name-wrap { position:relative; margin-bottom:20px; }
+  .name-wrap input, .pw-wrap input {
+    width:100%; padding:14px 16px;
+    border:2px solid var(--border); border-radius:12px;
+    font-family:'Nunito',sans-serif; font-size:15px;
+    color:var(--ink); background:var(--cream); outline:none;
+    transition:border-color 0.2s;
+  }
+  .name-wrap input:focus, .pw-wrap input:focus { border-color:var(--pink); }
+  .pw-wrap { margin-bottom:28px; }
+  .pw-wrap input { letter-spacing:0.15em; }
+
+  .name-dropdown {
+    position:absolute; top:calc(100% + 4px); left:0; right:0;
+    background:white; border:1.5px solid var(--border); border-radius:12px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.08);
+    max-height:200px; overflow-y:auto; z-index:100; display:none;
+  }
+  .name-dropdown.show { display:block; }
+  .name-option {
+    padding:11px 16px; font-size:14px; cursor:pointer;
+    border-bottom:1px solid #fbe8eb; transition:background 0.15s;
+  }
+  .name-option:last-child { border-bottom:none; }
+  .name-option:hover { background:var(--pink-light); color:var(--pink); font-weight:700; }
+
+  .login-btn {
+    width:100%; padding:15px; background:var(--pink); color:white;
+    border:none; border-radius:12px; font-family:'Nunito',sans-serif;
+    font-size:16px; font-weight:800; cursor:pointer;
+    transition:background 0.2s, transform 0.1s; letter-spacing:0.04em;
+  }
+  .login-btn:hover { background:#d44560; }
+  .login-btn:active { transform:scale(0.98); }
+  .login-btn:disabled { background:var(--pink-mid); cursor:not-allowed; }
+
+  .msg-box {
+    margin-top:14px; padding:10px 14px; border-radius:8px;
+    font-size:13px; font-weight:700; text-align:center; display:none;
+  }
+  .msg-box.show { display:block; }
+  .msg-box.error { background:#fde8ec; color:var(--pink); }
+  .msg-box.loading { background:var(--light); color:var(--mid); }
+
+  .spinner {
+    display:inline-block; width:14px; height:14px;
+    border:2px solid rgba(0,0,0,0.15); border-top-color:var(--mid);
+    border-radius:50%; animation:spin 0.7s linear infinite;
+    vertical-align:middle; margin-right:6px;
+  }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  /* ===== APP ===== */
+  #app-screen { display:none; min-height:100vh; }
+
+  .app-header {
+    background:linear-gradient(135deg,var(--pink) 0%,#c9384f 100%);
+    padding:28px 20px 36px; position:relative; overflow:hidden;
+  }
+  .app-header::before {
+    content:''; position:absolute; top:-40px; right:-40px;
+    width:160px; height:160px; background:rgba(255,255,255,0.08); border-radius:50%;
+  }
+  .app-header::after {
+    content:''; position:absolute; bottom:-60px; left:20px;
+    width:120px; height:120px; background:rgba(255,255,255,0.06); border-radius:50%;
+  }
+  .header-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+  .header-logo { font-family:'Playfair Display',serif; color:white; font-size:18px; opacity:0.9; }
+  .logout-btn {
+    background:rgba(255,255,255,0.2); border:none; color:white;
+    padding:6px 14px; border-radius:20px; font-family:'Nunito',sans-serif;
+    font-size:12px; font-weight:700; cursor:pointer; transition:background 0.2s;
+  }
+  .logout-btn:hover { background:rgba(255,255,255,0.3); }
+  .welcome-text { color:rgba(255,255,255,0.8); font-size:13px; font-weight:600; margin-bottom:2px; }
+  .volunteer-name { font-family:'Playfair Display',serif; color:white; font-size:28px; }
+
+  .returning-banner {
+    margin-top:14px; background:rgba(255,255,255,0.15);
+    border-radius:12px; padding:10px 14px;
+    font-size:13px; color:rgba(255,255,255,0.95); font-weight:600; display:none;
+  }
+  .returning-banner.show { display:block; }
+
+  /* Stats */
+  .stats-row {
+    display:flex; gap:10px; padding:0 16px;
+    margin-top:-28px; margin-bottom:20px; position:relative; z-index:10;
+  }
+  .stat-card {
+    flex:1; background:white; border-radius:16px; padding:16px 12px;
+    text-align:center; box-shadow:0 4px 20px rgba(232,85,106,0.12);
+  }
+  .stat-number { font-family:'Playfair Display',serif; font-size:32px; color:var(--pink); line-height:1; margin-bottom:4px; }
+  .stat-label { font-size:10px; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; color:var(--mid); }
+
+  /* Milestone */
+  .milestone-banner {
+    margin:0 16px 20px; background:linear-gradient(135deg,#fff8e8,#fef0d0);
+    border:1.5px solid #f0d090; border-radius:14px;
+    padding:14px 16px; display:none; align-items:center; gap:12px;
+  }
+  .milestone-icon { font-size:28px; flex-shrink:0; }
+  .milestone-text strong { display:block; font-size:14px; font-weight:800; color:var(--gold); margin-bottom:2px; }
+  .milestone-text span { font-size:12px; color:#8a6830; }
+
+  /* Section */
+  .section { padding:0 16px; margin-bottom:24px; }
+  .section-title {
+    font-size:11px; font-weight:800; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--mid); margin-bottom:12px;
+  }
+
+  /* Year bars */
+  .year-bars { display:flex; flex-direction:column; gap:8px; }
+  .year-row {
+    display:flex; align-items:center; gap:10px;
+    background:white; padding:12px 14px; border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.04);
+  }
+  .year-label { font-size:13px; font-weight:800; color:var(--ink); width:38px; flex-shrink:0; }
+  .year-bar-wrap { flex:1; height:8px; background:var(--light); border-radius:4px; overflow:hidden; }
+  .year-bar { height:100%; background:linear-gradient(90deg,var(--pink-mid),var(--pink)); border-radius:4px; }
+  .year-count { font-size:13px; font-weight:800; color:var(--pink); width:28px; text-align:right; flex-shrink:0; }
+
+  /* Events */
+  .event-list { display:flex; flex-direction:column; gap:8px; }
+  .event-item {
+    background:white; border-radius:12px; padding:14px 16px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.04);
+    display:flex; align-items:center; gap:12px;
+    animation:fadeUp 0.3s ease both;
+  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .event-dot { width:10px; height:10px; border-radius:50%; background:var(--pink-mid); flex-shrink:0; }
+  .event-info { flex:1; }
+  .event-name { font-size:14px; font-weight:700; color:var(--ink); margin-bottom:2px; }
+  .event-date { font-size:12px; color:var(--mid); font-weight:600; }
+  .event-year-tag {
+    font-size:10px; font-weight:800; letter-spacing:0.08em;
+    padding:3px 8px; border-radius:20px;
+    background:var(--pink-light); color:var(--pink); flex-shrink:0;
+  }
+
+  .no-records { text-align:center; padding:40px 20px; color:var(--mid); }
+  .no-records .emoji { font-size:40px; margin-bottom:12px; }
+  .no-records p { font-size:14px; line-height:1.6; }
+
+  .bottom-pad { height:48px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="heart-logo">💗</div>
+  <h1 class="login-title">Twinkle Hearts</h1>
+  <p class="login-sub">Check your volunteer attendance record</p>
+
+  <div class="login-box">
+    <label class="field-label">Your Name</label>
+    <div class="name-wrap">
+      <input type="text" id="name-input" placeholder="Type your name to search…" autocomplete="off">
+      <div class="name-dropdown" id="name-dropdown"></div>
+    </div>
+
+    <label class="field-label">Password</label>
+    <div class="pw-wrap">
+      <input type="password" id="pw-input" placeholder="••••••••">
+    </div>
+
+    <button class="login-btn" id="login-btn" onclick="doLogin()">View My Records</button>
+    <div class="msg-box error" id="error-msg"></div>
+    <div class="msg-box loading" id="loading-msg"><span class="spinner"></span>Loading your records…</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-screen">
+  <div class="app-header">
+    <div class="header-top">
+      <div class="header-logo">💗 Twinkle Hearts</div>
+      <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+    </div>
+    <div class="welcome-text">Welcome back,</div>
+    <div class="volunteer-name" id="display-name"></div>
+    <div class="returning-banner" id="returning-banner">
+      🌟 Your history is all here — every event you've joined is saved and valued!
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-number" id="total-count">—</div>
+      <div class="stat-label">Total Events</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="this-year-count">—</div>
+      <div class="stat-label">This Year</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="years-active">—</div>
+      <div class="stat-label">Years Active</div>
+    </div>
+  </div>
+
+  <div class="milestone-banner" id="milestone-banner">
+    <div class="milestone-icon" id="milestone-icon">🌟</div>
+    <div class="milestone-text">
+      <strong id="milestone-title"></strong>
+      <span id="milestone-sub"></span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Events by Year</div>
+    <div class="year-bars" id="year-bars"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Your Event History</div>
+    <div class="event-list" id="event-list"></div>
+  </div>
+
+  <div class="bottom-pad"></div>
+</div>
+
+<script>
+// ============================================================
+// STEP 1: Paste your Supabase credentials here after setup
+// ============================================================
+const SUPABASE_URL      = 'https://vkmafkzoocdlkgjubwgb.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrbWFma3pvb2NkbGtnanVid2diIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NTUxODAsImV4cCI6MjA4ODUzMTE4MH0.rNDMOJNzWQprzUhm5yROLQIFVbBh7-BRQdGk5b8F17Y';
+const APP_PASSWORD      = 'TwinkleHearts2024';       // shared password — change this!
+// ============================================================
+
+const TABLE = 'attendance_records';
+let allNames = [];
+let selectedName = null;
+
+// ---- Load volunteer names for search ----
+async function loadNames() {
+  try {
+    // Get distinct names via Supabase REST (fetch all attended=Yes rows, names only)
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/${TABLE}?select=name&attended=eq.Yes`,
+      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+    );
+    const data = await res.json();
+    const nameSet = new Set(data.map(r => r.name?.trim()).filter(Boolean));
+    allNames = [...nameSet].sort((a,b) => a.localeCompare(b));
+  } catch(e) {
+    console.warn('Name load failed — check Supabase config', e);
+  }
+}
+loadNames();
+
+// ---- Name search dropdown ----
+const nameInput    = document.getElementById('name-input');
+const nameDropdown = document.getElementById('name-dropdown');
+
+nameInput.addEventListener('input', () => {
+  const q = nameInput.value.trim().toLowerCase();
+  selectedName = null;
+  if (q.length < 1) { nameDropdown.classList.remove('show'); return; }
+  const matches = allNames.filter(n => n.toLowerCase().includes(q)).slice(0, 8);
+  if (!matches.length) { nameDropdown.classList.remove('show'); return; }
+  nameDropdown.innerHTML = matches.map(n =>
+    `<div class="name-option" onclick="selectName(this,'${n.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">${n}</div>`
+  ).join('');
+  nameDropdown.classList.add('show');
+});
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.name-wrap')) nameDropdown.classList.remove('show');
+});
+
+function selectName(el, name) {
+  selectedName = name;
+  nameInput.value = name;
+  nameDropdown.classList.remove('show');
+}
+
+// Allow keyboard flow
+nameInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && selectedName) document.getElementById('pw-input').focus();
+});
+document.getElementById('pw-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+// ---- Login ----
+async function doLogin() {
+  const pw   = document.getElementById('pw-input').value;
+  const name = selectedName || nameInput.value.trim();
+  const errEl  = document.getElementById('error-msg');
+  const loadEl = document.getElementById('loading-msg');
+  const btn    = document.getElementById('login-btn');
+
+  errEl.classList.remove('show');
+  loadEl.classList.remove('show');
+
+  if (!name) {
+    errEl.textContent = 'Please select your name from the list.';
+    errEl.classList.add('show'); return;
+  }
+  if (pw !== APP_PASSWORD) {
+    errEl.textContent = 'Incorrect password. Please try again.';
+    errEl.classList.add('show'); return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Loading…';
+  loadEl.classList.add('show');
+
+  try {
+    const records = await fetchAttendance(name);
+    renderApp(name, records);
+  } catch(e) {
+    errEl.textContent = 'Could not load records. Check your internet connection and try again.';
+    errEl.classList.add('show');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'View My Records';
+    loadEl.classList.remove('show');
+  }
+}
+
+// ---- Fetch from Supabase ----
+async function fetchAttendance(name) {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/${TABLE}?name=eq.${encodeURIComponent(name)}&attended=eq.Yes&order=date.desc&select=event,date,year`,
+    { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+  );
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+// ---- Render dashboard ----
+function renderApp(name, records) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display   = 'block';
+
+  document.getElementById('display-name').textContent = name;
+
+  const total       = records.length;
+  const currentYear = new Date().getFullYear().toString();
+  const thisYear    = records.filter(r => String(r.year) === currentYear).length;
+  const years       = [...new Set(records.map(r => r.year).filter(Boolean))];
+
+  document.getElementById('total-count').textContent    = total;
+  document.getElementById('this-year-count').textContent = thisYear;
+  document.getElementById('years-active').textContent   = years.length;
+
+  // Returning volunteer — last event > 6 months ago
+  if (total > 0) {
+    const lastDate   = new Date(records[0].date);
+    const monthsAgo  = (Date.now() - lastDate) / (1000*60*60*24*30);
+    if (monthsAgo > 6) document.getElementById('returning-banner').classList.add('show');
+  }
+
+  // Milestone
+  const mb = document.getElementById('milestone-banner');
+  if (total >= 50)      setMilestone(mb,'🏆','Champion Volunteer!',`${total} events — you are a legend in the Twinkle Hearts family.`);
+  else if (total >= 25) setMilestone(mb,'⭐','Star Volunteer!',`${total} events and counting — thank you for your incredible dedication!`);
+  else if (total >= 10) setMilestone(mb,'💛','Dedicated Heart!',`${total} events — you've made a real difference to so many lives.`);
+  else if (total >= 5)  setMilestone(mb,'🌱','Growing Heart!',`${total} events — wonderful to have you with us!`);
+  else if (total > 0)   setMilestone(mb,'💗','Welcome!','Thank you for volunteering with Twinkle Hearts!');
+
+  // Year breakdown bars
+  const byYear = {};
+  records.forEach(r => { if (r.year) byYear[r.year] = (byYear[r.year]||0) + 1; });
+  const maxVal = Math.max(...Object.values(byYear), 1);
+  document.getElementById('year-bars').innerHTML =
+    Object.entries(byYear)
+      .sort((a,b) => b[0].localeCompare(a[0]))
+      .map(([yr, cnt]) => `
+        <div class="year-row">
+          <div class="year-label">${yr}</div>
+          <div class="year-bar-wrap">
+            <div class="year-bar" style="width:${Math.round(cnt/maxVal*100)}%"></div>
+          </div>
+          <div class="year-count">${cnt}</div>
+        </div>`
+      ).join('');
+
+  // Event list
+  const listEl = document.getElementById('event-list');
+  if (!total) {
+    listEl.innerHTML = `
+      <div class="no-records">
+        <div class="emoji">💗</div>
+        <p>No attendance records found yet.<br>We look forward to seeing you at our next event!</p>
+      </div>`;
+  } else {
+    listEl.innerHTML = records.map((r,i) => `
+      <div class="event-item" style="animation-delay:${Math.min(i*0.04,0.6)}s">
+        <div class="event-dot"></div>
+        <div class="event-info">
+          <div class="event-name">${r.event || '—'}</div>
+          <div class="event-date">${fmtDate(r.date)}</div>
+        </div>
+        <div class="event-year-tag">${r.year || ''}</div>
+      </div>`
+    ).join('');
+  }
+}
+
+function setMilestone(el, icon, title, sub) {
+  el.style.display = 'flex';
+  document.getElementById('milestone-icon').textContent  = icon;
+  document.getElementById('milestone-title').textContent = title;
+  document.getElementById('milestone-sub').textContent   = sub;
+}
+
+function fmtDate(d) {
+  if (!d) return '';
+  return new Date(d).toLocaleDateString('en-SG', { day:'numeric', month:'long', year:'numeric' });
+}
+
+function doLogout() {
+  document.getElementById('app-screen').style.display   = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('name-input').value = '';
+  document.getElementById('pw-input').value   = '';
+  document.getElementById('error-msg').classList.remove('show');
+  document.getElementById('returning-banner').classList.remove('show');
+  document.getElementById('milestone-banner').style.display = 'none';
+  selectedName = null;
+}
+</script>
+</body>
+</html>
