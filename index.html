@@ -3,289 +3,390 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Twinkle Hearts — My Attendance</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<title>Twinkle Hearts — Attendance</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --pink: #e8556a;
-    --pink-light: #fde8ec;
-    --pink-mid: #f4a8b4;
-    --cream: #fffaf8;
-    --ink: #2d2229;
-    --mid: #8a7880;
-    --light: #f7f0f2;
-    --gold: #c9853a;
-    --border: #edd8dc;
+    --bg: #f5f0e8;
+    --white: #ffffff;
+    --pink: #c0392b;
+    --pink-light: #fdf0ee;
+    --teal: #2d6a5a;
+    --teal-light: #e8f5f1;
+    --ink: #1a1a1a;
+    --mid: #888;
+    --border: #e8e0d5;
+    --card-shadow: 0 1px 4px rgba(0,0,0,0.07);
   }
+
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Nunito',sans-serif; background:var(--cream); color:var(--ink); min-height:100vh; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+  }
 
   /* ===== LOGIN ===== */
   #login-screen {
-    min-height:100vh; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; padding:32px 24px;
-    background:linear-gradient(160deg,#fff0f3 0%,#fffaf8 60%,#fff5e8 100%);
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 32px 20px;
+    background: var(--bg);
   }
-  .heart-logo { font-size:52px; margin-bottom:10px; animation:pulse 2.5s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
-  .login-title { font-family:'Playfair Display',serif; font-size:34px; color:var(--pink); text-align:center; margin-bottom:4px; }
-  .login-sub { font-size:14px; color:var(--mid); text-align:center; margin-bottom:36px; }
 
-  .login-box {
-    background:white; border-radius:24px; padding:36px 32px;
-    width:100%; max-width:400px;
-    box-shadow:0 12px 48px rgba(232,85,106,0.13);
+  .login-logo { font-size: 44px; margin-bottom: 10px; }
+  .login-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 30px; color: var(--ink);
+    text-align: center; margin-bottom: 4px;
   }
+  .login-sub { font-size: 14px; color: var(--mid); text-align: center; margin-bottom: 36px; }
+
+  .login-card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 32px 28px;
+    width: 100%; max-width: 380px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
   .field-label {
-    display:block; font-size:11px; font-weight:800;
-    letter-spacing:0.12em; text-transform:uppercase;
-    color:var(--mid); margin-bottom:8px;
+    display: block; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--mid); margin-bottom: 8px;
   }
-  .name-wrap { position:relative; margin-bottom:20px; }
-  .name-wrap input, .pw-wrap input {
-    width:100%; padding:14px 16px;
-    border:2px solid var(--border); border-radius:12px;
-    font-family:'Nunito',sans-serif; font-size:15px;
-    color:var(--ink); background:var(--cream); outline:none;
-    transition:border-color 0.2s;
-  }
-  .name-wrap input:focus, .pw-wrap input:focus { border-color:var(--pink); }
-  .pw-wrap { margin-bottom:28px; }
-  .pw-wrap input { letter-spacing:0.15em; }
 
-  .name-dropdown {
-    position:absolute; top:calc(100% + 4px); left:0; right:0;
-    background:white; border:1.5px solid var(--border); border-radius:12px;
-    box-shadow:0 8px 24px rgba(0,0,0,0.08);
-    max-height:200px; overflow-y:auto; z-index:100; display:none;
+  .login-card input {
+    width: 100%; padding: 13px 16px;
+    border: 1.5px solid var(--border); border-radius: 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px;
+    color: var(--ink); background: #faf8f5; outline: none;
+    transition: border-color 0.2s; margin-bottom: 18px;
   }
-  .name-dropdown.show { display:block; }
-  .name-option {
-    padding:11px 16px; font-size:14px; cursor:pointer;
-    border-bottom:1px solid #fbe8eb; transition:background 0.15s;
-  }
-  .name-option:last-child { border-bottom:none; }
-  .name-option:hover { background:var(--pink-light); color:var(--pink); font-weight:700; }
+  .login-card input:focus { border-color: var(--pink); }
 
   .login-btn {
-    width:100%; padding:15px; background:var(--pink); color:white;
-    border:none; border-radius:12px; font-family:'Nunito',sans-serif;
-    font-size:16px; font-weight:800; cursor:pointer;
-    transition:background 0.2s, transform 0.1s; letter-spacing:0.04em;
+    width: 100%; padding: 14px;
+    background: var(--pink); color: white; border: none;
+    border-radius: 12px; font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: background 0.2s;
   }
-  .login-btn:hover { background:#d44560; }
-  .login-btn:active { transform:scale(0.98); }
-  .login-btn:disabled { background:var(--pink-mid); cursor:not-allowed; }
+  .login-btn:hover { background: #a93226; }
+  .login-btn:disabled { background: #e8a9a3; cursor: not-allowed; }
 
-  .msg-box {
-    margin-top:14px; padding:10px 14px; border-radius:8px;
-    font-size:13px; font-weight:700; text-align:center; display:none;
+  .login-error {
+    margin-top: 12px; padding: 10px 14px;
+    background: #fdf0ee; color: var(--pink);
+    border-radius: 8px; font-size: 13px; font-weight: 500;
+    text-align: center; display: none;
   }
-  .msg-box.show { display:block; }
-  .msg-box.error { background:#fde8ec; color:var(--pink); }
-  .msg-box.loading { background:var(--light); color:var(--mid); }
-
-  .spinner {
-    display:inline-block; width:14px; height:14px;
-    border:2px solid rgba(0,0,0,0.15); border-top-color:var(--mid);
-    border-radius:50%; animation:spin 0.7s linear infinite;
-    vertical-align:middle; margin-right:6px;
-  }
-  @keyframes spin { to{transform:rotate(360deg)} }
+  .login-error.show { display: block; }
 
   /* ===== APP ===== */
-  #app-screen { display:none; min-height:100vh; }
+  #app-screen { display: none; max-width: 680px; margin: 0 auto; padding: 0 0 60px; }
 
+  /* Header */
   .app-header {
-    background:linear-gradient(135deg,var(--pink) 0%,#c9384f 100%);
-    padding:28px 20px 36px; position:relative; overflow:hidden;
+    padding: 28px 20px 0;
+    display: flex; justify-content: space-between; align-items: center;
   }
-  .app-header::before {
-    content:''; position:absolute; top:-40px; right:-40px;
-    width:160px; height:160px; background:rgba(255,255,255,0.08); border-radius:50%;
+  .app-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px; color: var(--ink);
   }
-  .app-header::after {
-    content:''; position:absolute; bottom:-60px; left:20px;
-    width:120px; height:120px; background:rgba(255,255,255,0.06); border-radius:50%;
+  .app-logo span { color: var(--pink); }
+  .signout-btn {
+    font-size: 13px; color: var(--mid); background: none;
+    border: 1.5px solid var(--border); border-radius: 20px;
+    padding: 5px 14px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: color 0.2s, border-color 0.2s;
   }
-  .header-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-  .header-logo { font-family:'Playfair Display',serif; color:white; font-size:18px; opacity:0.9; }
-  .logout-btn {
-    background:rgba(255,255,255,0.2); border:none; color:white;
-    padding:6px 14px; border-radius:20px; font-family:'Nunito',sans-serif;
-    font-size:12px; font-weight:700; cursor:pointer; transition:background 0.2s;
-  }
-  .logout-btn:hover { background:rgba(255,255,255,0.3); }
-  .welcome-text { color:rgba(255,255,255,0.8); font-size:13px; font-weight:600; margin-bottom:2px; }
-  .volunteer-name { font-family:'Playfair Display',serif; color:white; font-size:28px; }
+  .signout-btn:hover { color: var(--pink); border-color: var(--pink); }
 
-  .returning-banner {
-    margin-top:14px; background:rgba(255,255,255,0.15);
-    border-radius:12px; padding:10px 14px;
-    font-size:13px; color:rgba(255,255,255,0.95); font-weight:600; display:none;
+  /* Tabs */
+  .tabs {
+    display: flex; padding: 20px 20px 0; gap: 0;
+    border-bottom: 1.5px solid var(--border); margin: 0 0 24px;
   }
-  .returning-banner.show { display:block; }
+  .tab {
+    padding: 12px 4px; margin-right: 24px;
+    font-size: 15px; font-weight: 500; color: var(--mid);
+    cursor: pointer; border-bottom: 2.5px solid transparent;
+    margin-bottom: -1.5px; transition: color 0.2s, border-color 0.2s;
+    background: none; border-top: none; border-left: none; border-right: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .tab.active { color: var(--pink); border-bottom-color: var(--pink); font-weight: 600; }
+  .tab-icon { margin-right: 6px; }
 
-  /* Stats */
-  .stats-row {
-    display:flex; gap:10px; padding:0 16px;
-    margin-top:-28px; margin-bottom:20px; position:relative; z-index:10;
+  /* ===== SEARCH TAB ===== */
+  #tab-search { padding: 0 20px; }
+
+  .search-wrap {
+    position: relative; margin-bottom: 6px;
   }
-  .stat-card {
-    flex:1; background:white; border-radius:16px; padding:16px 12px;
-    text-align:center; box-shadow:0 4px 20px rgba(232,85,106,0.12);
+  .search-wrap input {
+    width: 100%; padding: 14px 44px 14px 16px;
+    border: 1.5px solid var(--border); border-radius: 14px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px;
+    color: var(--ink); background: var(--white); outline: none;
+    transition: border-color 0.2s;
+    box-shadow: var(--card-shadow);
   }
-  .stat-number { font-family:'Playfair Display',serif; font-size:32px; color:var(--pink); line-height:1; margin-bottom:4px; }
-  .stat-label { font-size:10px; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; color:var(--mid); }
+  .search-wrap input:focus { border-color: var(--pink); }
+  .search-icon {
+    position: absolute; right: 14px; top: 50%;
+    transform: translateY(-50%); color: var(--mid); font-size: 16px;
+    pointer-events: none;
+  }
+
+  .search-hint {
+    font-size: 12px; color: var(--mid); margin-bottom: 20px;
+    padding: 0 4px;
+  }
+
+  /* Name dropdown */
+  .name-dropdown {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+    background: var(--white); border: 1.5px solid var(--border);
+    border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    max-height: 220px; overflow-y: auto; z-index: 100; display: none;
+  }
+  .name-dropdown.show { display: block; }
+  .name-option {
+    padding: 11px 16px; font-size: 14px; cursor: pointer;
+    border-bottom: 1px solid var(--border); transition: background 0.1s;
+  }
+  .name-option:last-child { border-bottom: none; }
+  .name-option:hover { background: var(--pink-light); color: var(--pink); }
+
+  /* Results header */
+  .results-header {
+    display: flex; justify-content: space-between;
+    align-items: baseline; margin-bottom: 14px;
+  }
+  .results-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; color: var(--ink);
+  }
+  .results-title em { color: var(--pink); font-style: normal; }
+  .results-count { font-size: 13px; color: var(--mid); font-weight: 500; }
+
+  /* Pills */
+  .pills { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+  .pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: 100px;
+    font-size: 13px; font-weight: 500; border: 1.5px solid var(--border);
+    background: var(--white);
+  }
+  .pill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .pill-dot.pink { background: var(--pink); }
+  .pill-dot.teal { background: var(--teal); }
+  .pill strong { font-weight: 600; }
 
   /* Milestone */
-  .milestone-banner {
-    margin:0 16px 20px; background:linear-gradient(135deg,#fff8e8,#fef0d0);
-    border:1.5px solid #f0d090; border-radius:14px;
-    padding:14px 16px; display:none; align-items:center; gap:12px;
+  .milestone-pill {
+    display: none; align-items: center; gap: 8px;
+    padding: 10px 16px; border-radius: 100px;
+    background: #fef9ec; border: 1.5px solid #f0d870;
+    font-size: 13px; font-weight: 500; color: #7a5f10;
+    margin-bottom: 20px;
   }
-  .milestone-icon { font-size:28px; flex-shrink:0; }
-  .milestone-text strong { display:block; font-size:14px; font-weight:800; color:var(--gold); margin-bottom:2px; }
-  .milestone-text span { font-size:12px; color:#8a6830; }
+  .milestone-pill.show { display: flex; }
 
-  /* Section */
-  .section { padding:0 16px; margin-bottom:24px; }
-  .section-title {
-    font-size:11px; font-weight:800; letter-spacing:0.12em;
-    text-transform:uppercase; color:var(--mid); margin-bottom:12px;
+  /* Year group */
+  .year-group { margin-bottom: 24px; }
+  .year-divider {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 12px;
   }
+  .year-divider::before, .year-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+  .year-label-text { font-size: 13px; color: var(--mid); font-weight: 500; }
 
-  /* Year bars */
-  .year-bars { display:flex; flex-direction:column; gap:8px; }
-  .year-row {
-    display:flex; align-items:center; gap:10px;
-    background:white; padding:12px 14px; border-radius:12px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.04);
+  /* Event card */
+  .event-card {
+    background: var(--white); border-radius: 14px;
+    padding: 16px 18px; margin-bottom: 10px;
+    box-shadow: var(--card-shadow);
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; animation: fadeUp 0.25s ease both;
   }
-  .year-label { font-size:13px; font-weight:800; color:var(--ink); width:38px; flex-shrink:0; }
-  .year-bar-wrap { flex:1; height:8px; background:var(--light); border-radius:4px; overflow:hidden; }
-  .year-bar { height:100%; background:linear-gradient(90deg,var(--pink-mid),var(--pink)); border-radius:4px; }
-  .year-count { font-size:13px; font-weight:800; color:var(--pink); width:28px; text-align:right; flex-shrink:0; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 
-  /* Events */
-  .event-list { display:flex; flex-direction:column; gap:8px; }
-  .event-item {
-    background:white; border-radius:12px; padding:14px 16px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.04);
-    display:flex; align-items:center; gap:12px;
-    animation:fadeUp 0.3s ease both;
-  }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-  .event-dot { width:10px; height:10px; border-radius:50%; background:var(--pink-mid); flex-shrink:0; }
-  .event-info { flex:1; }
-  .event-name { font-size:14px; font-weight:700; color:var(--ink); margin-bottom:2px; }
-  .event-date { font-size:12px; color:var(--mid); font-weight:600; }
-  .event-year-tag {
-    font-size:10px; font-weight:800; letter-spacing:0.08em;
-    padding:3px 8px; border-radius:20px;
-    background:var(--pink-light); color:var(--pink); flex-shrink:0;
+  .event-card-left { flex: 1; }
+  .event-card-name { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 6px; }
+  .event-card-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .event-meta-item { font-size: 12px; color: var(--mid); display: flex; align-items: center; gap: 4px; }
+
+  .attended-badge {
+    flex-shrink: 0; padding: 5px 12px; border-radius: 100px;
+    background: var(--teal-light); color: var(--teal);
+    font-size: 12px; font-weight: 600; white-space: nowrap;
   }
 
-  .no-records { text-align:center; padding:40px 20px; color:var(--mid); }
-  .no-records .emoji { font-size:40px; margin-bottom:12px; }
-  .no-records p { font-size:14px; line-height:1.6; }
+  /* Empty state */
+  .empty-state { text-align: center; padding: 48px 20px; color: var(--mid); }
+  .empty-state .emoji { font-size: 36px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; line-height: 1.6; }
 
-  .bottom-pad { height:48px; }
+  /* ===== TOP 20 TAB ===== */
+  #tab-top20 { padding: 0 20px; display: none; }
+
+  .top20-toggle {
+    display: flex; gap: 8px; margin-bottom: 20px;
+  }
+  .toggle-btn {
+    padding: 7px 16px; border-radius: 100px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+    border: 1.5px solid var(--border); background: var(--white); color: var(--mid);
+  }
+  .toggle-btn.active { background: var(--pink); color: white; border-color: var(--pink); }
+
+  .leaderboard { display: flex; flex-direction: column; gap: 8px; }
+
+  .lb-item {
+    background: var(--white); border-radius: 14px;
+    padding: 14px 16px; box-shadow: var(--card-shadow);
+    display: flex; align-items: center; gap: 14px;
+    animation: fadeUp 0.25s ease both;
+  }
+  .lb-rank {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; color: var(--mid); width: 28px;
+    text-align: center; flex-shrink: 0;
+  }
+  .lb-rank.gold { color: #c9a227; }
+  .lb-rank.silver { color: #9e9e9e; }
+  .lb-rank.bronze { color: #cd7f32; }
+
+  .lb-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--ink); }
+  .lb-count {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; color: var(--pink); flex-shrink: 0;
+  }
+  .lb-count-label { font-size: 11px; color: var(--mid); text-align: right; }
+
+  .lb-bar-wrap { width: 80px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .lb-bar { height: 100%; background: linear-gradient(90deg, #f4a8b4, var(--pink)); border-radius: 3px; }
+
+  .spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid rgba(0,0,0,0.1); border-top-color: var(--pink);
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+    vertical-align: middle; margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-row { text-align: center; padding: 32px; color: var(--mid); font-size: 14px; }
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- ===== LOGIN ===== -->
 <div id="login-screen">
-  <div class="heart-logo">💗</div>
+  <div class="login-logo">💗</div>
   <h1 class="login-title">Twinkle Hearts</h1>
-  <p class="login-sub">Check your volunteer attendance record</p>
+  <p class="login-sub">Volunteer attendance records</p>
 
-  <div class="login-box">
-    <label class="field-label">Your Name</label>
-    <div class="name-wrap">
-      <input type="text" id="name-input" placeholder="Type your name to search…" autocomplete="off">
-      <div class="name-dropdown" id="name-dropdown"></div>
-    </div>
-
+  <div class="login-card">
     <label class="field-label">Password</label>
-    <div class="pw-wrap">
-      <input type="password" id="pw-input" placeholder="••••••••">
-    </div>
-
-    <button class="login-btn" id="login-btn" onclick="doLogin()">View My Records</button>
-    <div class="msg-box error" id="error-msg"></div>
-    <div class="msg-box loading" id="loading-msg"><span class="spinner"></span>Loading your records…</div>
+    <input type="password" id="pw-input" placeholder="Enter password" autocomplete="off">
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Enter</button>
+    <div class="login-error" id="login-error">Incorrect password. Please try again.</div>
   </div>
 </div>
 
-<!-- APP -->
+<!-- ===== APP ===== -->
 <div id="app-screen">
   <div class="app-header">
-    <div class="header-top">
-      <div class="header-logo">💗 Twinkle Hearts</div>
-      <button class="logout-btn" onclick="doLogout()">Sign Out</button>
-    </div>
-    <div class="welcome-text">Welcome back,</div>
-    <div class="volunteer-name" id="display-name"></div>
-    <div class="returning-banner" id="returning-banner">
-      🌟 Your history is all here — every event you've joined is saved and valued!
-    </div>
+    <div class="app-logo">Twinkle <span>Hearts</span> 💗</div>
+    <button class="signout-btn" onclick="doLogout()">Sign out</button>
   </div>
 
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-number" id="total-count">—</div>
-      <div class="stat-label">Total Events</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-number" id="this-year-count">—</div>
-      <div class="stat-label">This Year</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-number" id="years-active">—</div>
-      <div class="stat-label">Years Active</div>
-    </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('search')">
+      <span class="tab-icon">🔍</span>Search Records
+    </button>
+    <button class="tab" onclick="switchTab('top20')">
+      <span class="tab-icon">🏆</span>Top 20 Volunteers
+    </button>
   </div>
 
-  <div class="milestone-banner" id="milestone-banner">
-    <div class="milestone-icon" id="milestone-icon">🌟</div>
-    <div class="milestone-text">
-      <strong id="milestone-title"></strong>
-      <span id="milestone-sub"></span>
+  <!-- SEARCH TAB -->
+  <div id="tab-search">
+    <div class="search-wrap">
+      <input type="text" id="name-input" placeholder="Type your name…" autocomplete="off">
+      <span class="search-icon">🔍</span>
+      <div class="name-dropdown" id="name-dropdown"></div>
     </div>
+    <p class="search-hint">Type your full name. If the records are not correct, alert Siew Mui 😝</p>
+    <div id="search-results"></div>
   </div>
 
-  <div class="section">
-    <div class="section-title">Events by Year</div>
-    <div class="year-bars" id="year-bars"></div>
+  <!-- TOP 20 TAB -->
+  <div id="tab-top20">
+    <div class="top20-toggle">
+      <button class="toggle-btn active" id="btn-total" onclick="switchLeaderboard('total')">All Time</button>
+      <button class="toggle-btn" id="btn-year" onclick="switchLeaderboard('year')">This Year</button>
+    </div>
+    <div class="leaderboard" id="leaderboard"></div>
   </div>
-
-  <div class="section">
-    <div class="section-title">Your Event History</div>
-    <div class="event-list" id="event-list"></div>
-  </div>
-
-  <div class="bottom-pad"></div>
 </div>
 
 <script>
 // ============================================================
-// STEP 1: Paste your Supabase credentials here after setup
-// ============================================================
 const SUPABASE_URL      = 'https://vkmafkzoocdlkgjubwgb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrbWFma3pvb2NkbGtnanVid2diIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NTUxODAsImV4cCI6MjA4ODUzMTE4MH0.rNDMOJNzWQprzUhm5yROLQIFVbBh7-BRQdGk5b8F17Y';
-const APP_PASSWORD      = 'TwinkleHearts2024';       // shared password — change this!
+const APP_PASSWORD      = 'TwinkleHearts2024';
+const TABLE             = 'TwinkleHearts_Attendance2026';
+const CURRENT_YEAR      = new Date().getFullYear().toString();
 // ============================================================
 
-const TABLE = 'TwinkleHearts_Attendance2026';
-let allNames = [];
+let allNames     = [];
 let selectedName = null;
+let allRecords   = []; // cache for leaderboard
+let activeLeaderboard = 'total';
 
-// ---- Load volunteer names for search ----
+// ---- Login ----
+document.getElementById('pw-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+function doLogin() {
+  const pw  = document.getElementById('pw-input').value;
+  const err = document.getElementById('login-error');
+  err.classList.remove('show');
+  if (pw !== APP_PASSWORD) { err.classList.add('show'); return; }
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display   = 'block';
+  initApp();
+}
+
+function doLogout() {
+  document.getElementById('app-screen').style.display   = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('pw-input').value = '';
+  document.getElementById('name-input').value = '';
+  document.getElementById('search-results').innerHTML = '';
+  selectedName = null;
+}
+
+// ---- Init ----
+async function initApp() {
+  await loadNames();
+}
+
+// ---- Load all names ----
 async function loadNames() {
   try {
-    // Get distinct names via Supabase REST (fetch all attended=Yes rows, names only)
     const res = await fetch(
       `${SUPABASE_URL}/rest/v1/${TABLE}?select=Name&Attended=eq.Yes`,
       { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
@@ -293,11 +394,24 @@ async function loadNames() {
     const data = await res.json();
     const nameSet = new Set(data.map(r => r.Name?.trim()).filter(Boolean));
     allNames = [...nameSet].sort((a,b) => a.localeCompare(b));
-  } catch(e) {
-    console.warn('Name load failed — check Supabase config', e);
+  } catch(e) { console.warn('Name load failed', e); }
+}
+
+// ---- Tab switching ----
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-search').style.display = 'none';
+  document.getElementById('tab-top20').style.display  = 'none';
+
+  if (tab === 'search') {
+    document.querySelectorAll('.tab')[0].classList.add('active');
+    document.getElementById('tab-search').style.display = 'block';
+  } else {
+    document.querySelectorAll('.tab')[1].classList.add('active');
+    document.getElementById('tab-top20').style.display = 'block';
+    loadLeaderboard();
   }
 }
-loadNames();
 
 // ---- Name search dropdown ----
 const nameInput    = document.getElementById('name-input');
@@ -306,172 +420,175 @@ const nameDropdown = document.getElementById('name-dropdown');
 nameInput.addEventListener('input', () => {
   const q = nameInput.value.trim().toLowerCase();
   selectedName = null;
+  document.getElementById('search-results').innerHTML = '';
   if (q.length < 1) { nameDropdown.classList.remove('show'); return; }
   const matches = allNames.filter(n => n.toLowerCase().includes(q)).slice(0, 8);
   if (!matches.length) { nameDropdown.classList.remove('show'); return; }
   nameDropdown.innerHTML = matches.map(n =>
-    `<div class="name-option" onclick="selectName(this,'${n.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">${n}</div>`
+    `<div class="name-option" onclick="selectName('${n.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">${n}</div>`
   ).join('');
   nameDropdown.classList.add('show');
 });
 
 document.addEventListener('click', e => {
-  if (!e.target.closest('.name-wrap')) nameDropdown.classList.remove('show');
+  if (!e.target.closest('.search-wrap')) nameDropdown.classList.remove('show');
 });
 
-function selectName(el, name) {
+async function selectName(name) {
   selectedName = name;
   nameInput.value = name;
   nameDropdown.classList.remove('show');
+  await loadVolunteerRecords(name);
 }
 
-// Allow keyboard flow
-nameInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && selectedName) document.getElementById('pw-input').focus();
-});
-document.getElementById('pw-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin();
-});
-
-// ---- Login ----
-async function doLogin() {
-  const pw   = document.getElementById('pw-input').value;
-  const name = selectedName || nameInput.value.trim();
-  const errEl  = document.getElementById('error-msg');
-  const loadEl = document.getElementById('loading-msg');
-  const btn    = document.getElementById('login-btn');
-
-  errEl.classList.remove('show');
-  loadEl.classList.remove('show');
-
-  if (!name) {
-    errEl.textContent = 'Please select your name from the list.';
-    errEl.classList.add('show'); return;
-  }
-  if (pw !== APP_PASSWORD) {
-    errEl.textContent = 'Incorrect password. Please try again.';
-    errEl.classList.add('show'); return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'Loading…';
-  loadEl.classList.add('show');
+// ---- Fetch & render volunteer records ----
+async function loadVolunteerRecords(name) {
+  const resultsEl = document.getElementById('search-results');
+  resultsEl.innerHTML = `<div class="loading-row"><span class="spinner"></span>Loading…</div>`;
 
   try {
-    const records = await fetchAttendance(name);
-    renderApp(name, records);
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/${TABLE}?Name=eq.${encodeURIComponent(name)}&Attended=eq.Yes&order=Date.desc&select=Event,Date,Year,Beneficiary`,
+      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const records = await res.json();
+    renderVolunteerRecords(name, records);
   } catch(e) {
-    errEl.textContent = 'Could not load records. Check your internet connection and try again.';
-    errEl.classList.add('show');
+    resultsEl.innerHTML = `<div class="empty-state"><div class="emoji">⚠️</div><p>Could not load records.<br>Please try again.</p></div>`;
     console.error(e);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'View My Records';
-    loadEl.classList.remove('show');
   }
 }
 
-// ---- Fetch from Supabase ----
-async function fetchAttendance(name) {
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/${TABLE}?Name=eq.${encodeURIComponent(name)}&Attended=eq.Yes&order=Date.desc&select=Event,Date,Year`,
-    { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
-  );
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
-}
+function renderVolunteerRecords(name, records) {
+  const el     = document.getElementById('search-results');
+  const total  = records.length;
+  const thisYr = records.filter(r => String(r.Year) === CURRENT_YEAR).length;
+  const years  = [...new Set(records.map(r => r.Year).filter(Boolean))];
 
-// ---- Render dashboard ----
-function renderApp(name, records) {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app-screen').style.display   = 'block';
-
-  document.getElementById('display-name').textContent = name;
-
-  const total       = records.length;
-  const currentYear = new Date().getFullYear().toString();
-  const thisYear    = records.filter(r => String(r.Year) === currentYear).length;
-  const years       = [...new Set(records.map(r => r.Year).filter(Boolean))];
-
-  document.getElementById('total-count').textContent    = total;
-  document.getElementById('this-year-count').textContent = thisYear;
-  document.getElementById('years-active').textContent   = years.length;
-
-  // Returning volunteer — last event > 6 months ago
-  if (total > 0) {
-    const lastDate   = new Date(records[0].Date);
-    const monthsAgo  = (Date.now() - lastDate) / (1000*60*60*24*30);
-    if (monthsAgo > 6) document.getElementById('returning-banner').classList.add('show');
+  if (!total) {
+    el.innerHTML = `<div class="empty-state"><div class="emoji">💗</div><p>No records found for <strong>${name}</strong>.<br>We look forward to seeing you at our next event!</p></div>`;
+    return;
   }
 
   // Milestone
-  const mb = document.getElementById('milestone-banner');
-  if (total >= 50)      setMilestone(mb,'🏆','Champion Volunteer!',`${total} events — you are a legend in the Twinkle Hearts family.`);
-  else if (total >= 25) setMilestone(mb,'⭐','Star Volunteer!',`${total} events and counting — thank you for your incredible dedication!`);
-  else if (total >= 10) setMilestone(mb,'💛','Dedicated Heart!',`${total} events — you've made a real difference to so many lives.`);
-  else if (total >= 5)  setMilestone(mb,'🌱','Growing Heart!',`${total} events — wonderful to have you with us!`);
-  else if (total > 0)   setMilestone(mb,'💗','Welcome!','Thank you for volunteering with Twinkle Hearts!');
+  let milestoneHTML = '';
+  if      (total >= 50) milestoneHTML = `<div class="milestone-pill show">🏆 <strong>Champion Volunteer</strong> — ${total} events! You're a legend.</div>`;
+  else if (total >= 25) milestoneHTML = `<div class="milestone-pill show">⭐ <strong>Star Volunteer</strong> — ${total} events and counting!</div>`;
+  else if (total >= 10) milestoneHTML = `<div class="milestone-pill show">💛 <strong>Dedicated Heart</strong> — ${total} events attended!</div>`;
+  else if (total >= 5)  milestoneHTML = `<div class="milestone-pill show">🌱 <strong>Growing Heart</strong> — ${total} events, keep it up!</div>`;
 
-  // Year breakdown bars
+  // Group by year
   const byYear = {};
-  records.forEach(r => { if (r.Year) byYear[r.Year] = (byYear[r.Year]||0) + 1; });
-  const maxVal = Math.max(...Object.values(byYear), 1);
-  document.getElementById('year-bars').innerHTML =
-    Object.entries(byYear)
-      .sort((a,b) => b[0].localeCompare(a[0]))
-      .map(([yr, cnt]) => `
-        <div class="year-row">
-          <div class="year-label">${yr}</div>
-          <div class="year-bar-wrap">
-            <div class="year-bar" style="width:${Math.round(cnt/maxVal*100)}%"></div>
-          </div>
-          <div class="year-count">${cnt}</div>
-        </div>`
-      ).join('');
+  records.forEach(r => {
+    const yr = r.Year || 'Unknown';
+    if (!byYear[yr]) byYear[yr] = [];
+    byYear[yr].push(r);
+  });
 
-  // Event list
-  const listEl = document.getElementById('event-list');
-  if (!total) {
-    listEl.innerHTML = `
-      <div class="no-records">
-        <div class="emoji">💗</div>
-        <p>No attendance records found yet.<br>We look forward to seeing you at our next event!</p>
-      </div>`;
-  } else {
-    listEl.innerHTML = records.map((r,i) => `
-      <div class="event-item" style="animation-delay:${Math.min(i*0.04,0.6)}s">
-        <div class="event-dot"></div>
-        <div class="event-info">
-          <div class="event-name">${r.Event || '—'}</div>
-          <div class="event-date">${fmtDate(r.Date)}</div>
-        </div>
-        <div class="event-year-tag">${r.Year || ''}</div>
+  const yearGroupsHTML = Object.entries(byYear)
+    .sort((a,b) => b[0].localeCompare(a[0]))
+    .map(([yr, evts]) => `
+      <div class="year-group">
+        <div class="year-divider"><span class="year-label-text">${yr}</span></div>
+        ${evts.map((r, i) => `
+          <div class="event-card" style="animation-delay:${Math.min(i*0.04,0.5)}s">
+            <div class="event-card-left">
+              <div class="event-card-name">${r.Event || '—'}</div>
+              <div class="event-card-meta">
+                <span class="event-meta-item">📅 ${fmtDate(r.Date)}</span>
+                ${r.Beneficiary ? `<span class="event-meta-item">📍 ${r.Beneficiary}</span>` : ''}
+              </div>
+            </div>
+            <div class="attended-badge">✓ Attended</div>
+          </div>`
+        ).join('')}
       </div>`
     ).join('');
+
+  el.innerHTML = `
+    ${milestoneHTML}
+    <div class="results-header">
+      <div class="results-title">Records for <em>${name}</em></div>
+      <div class="results-count">${total} entries</div>
+    </div>
+    <div class="pills">
+      <div class="pill"><div class="pill-dot pink"></div><strong>${total}</strong> attended</div>
+      <div class="pill"><div class="pill-dot teal"></div><strong>${years.length}</strong> year${years.length !== 1 ? 's' : ''}</div>
+      <div class="pill"><div class="pill-dot pink"></div><strong>${thisYr}</strong> in ${CURRENT_YEAR}</div>
+    </div>
+    ${yearGroupsHTML}
+  `;
+}
+
+// ---- Leaderboard ----
+async function loadLeaderboard() {
+  const el = document.getElementById('leaderboard');
+  if (allRecords.length > 0) { renderLeaderboard(); return; } // use cache
+  el.innerHTML = `<div class="loading-row"><span class="spinner"></span>Loading…</div>`;
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/${TABLE}?select=Name,Year&Attended=eq.Yes`,
+      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+    );
+    allRecords = await res.json();
+    renderLeaderboard();
+  } catch(e) {
+    el.innerHTML = `<div class="empty-state"><p>Could not load leaderboard.</p></div>`;
   }
 }
 
-function setMilestone(el, icon, title, sub) {
-  el.style.display = 'flex';
-  document.getElementById('milestone-icon').textContent  = icon;
-  document.getElementById('milestone-title').textContent = title;
-  document.getElementById('milestone-sub').textContent   = sub;
+function switchLeaderboard(mode) {
+  activeLeaderboard = mode;
+  document.getElementById('btn-total').classList.toggle('active', mode === 'total');
+  document.getElementById('btn-year').classList.toggle('active',  mode === 'year');
+  renderLeaderboard();
 }
 
+function renderLeaderboard() {
+  const el = document.getElementById('leaderboard');
+  const counts = {};
+
+  allRecords.forEach(r => {
+    const name = r.Name?.trim();
+    if (!name) return;
+    if (activeLeaderboard === 'year' && String(r.Year) !== CURRENT_YEAR) return;
+    counts[name] = (counts[name] || 0) + 1;
+  });
+
+  const sorted = Object.entries(counts)
+    .sort((a,b) => b[1] - a[1])
+    .slice(0, 20);
+
+  if (!sorted.length) {
+    el.innerHTML = `<div class="empty-state"><p>No data for this period yet.</p></div>`;
+    return;
+  }
+
+  const maxVal = sorted[0][1];
+  el.innerHTML = sorted.map(([name, cnt], i) => {
+    const rank     = i + 1;
+    const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
+    const rankDisplay = rank <= 3 ? ['🥇','🥈','🥉'][rank-1] : rank;
+    return `
+      <div class="lb-item" style="animation-delay:${Math.min(i*0.03,0.5)}s">
+        <div class="lb-rank ${rankClass}">${rankDisplay}</div>
+        <div class="lb-name">${name}</div>
+        <div>
+          <div class="lb-bar-wrap"><div class="lb-bar" style="width:${Math.round(cnt/maxVal*100)}%"></div></div>
+        </div>
+        <div>
+          <div class="lb-count">${cnt}</div>
+          <div class="lb-count-label">events</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ---- Helpers ----
 function fmtDate(d) {
   if (!d) return '';
-  return new Date(d).toLocaleDateString('en-SG', { day:'numeric', month:'long', year:'numeric' });
-}
-
-function doLogout() {
-  document.getElementById('app-screen').style.display   = 'none';
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('name-input').value = '';
-  document.getElementById('pw-input').value   = '';
-  document.getElementById('error-msg').classList.remove('show');
-  document.getElementById('returning-banner').classList.remove('show');
-  document.getElementById('milestone-banner').style.display = 'none';
-  selectedName = null;
+  return new Date(d).toLocaleDateString('en-SG', { day:'numeric', month:'short', year:'numeric' });
 }
 </script>
 </body>
