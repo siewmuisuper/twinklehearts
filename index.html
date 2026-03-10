@@ -228,7 +228,21 @@ async function pickName(name) {
   selectedName = name;
   nameInput.value = name;
   nameDropdown.classList.remove('show');
+  logSearch(name);
   await loadRecords(name);
+}
+
+// Log search to Supabase
+async function logSearch(name) {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/TwinkleHearts_AppLogs`, {
+      method: 'POST',
+      headers: { ...HEADERS, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ Name: name })
+    });
+  } catch(e) {
+    // Silently fail — logging should never break the app
+  }
 }
 
 // Fetch records
