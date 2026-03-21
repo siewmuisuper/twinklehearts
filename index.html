@@ -56,7 +56,8 @@
   }
   .search-wrap input:focus { border-color: var(--pink); }
   .search-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
-  .search-hint { font-size: 12px; color: var(--mid); padding: 0 4px; margin-bottom: 20px; }
+  .search-hint { font-size: 12px; color: var(--mid); padding: 0 4px; margin-bottom: 8px; }
+  .search-disclaimer { font-size: 11.5px; color: var(--mid); padding: 0 4px; margin-bottom: 20px; line-height: 1.5; }
 
   /* Dropdown */
   .name-dropdown {
@@ -96,6 +97,15 @@
   .pill-dot.pink { background: var(--pink); }
   .pill-dot.teal { background: var(--teal); }
 
+  /* Nudge */
+  .nudge {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 16px; border-radius: 100px;
+    background: #eef4ff; border: 1.5px solid #b8d0f8;
+    font-size: 13px; color: #2a4a8a;
+    margin-bottom: 20px;
+  }
+
   /* Milestone */
   .milestone {
     display: flex; align-items: center; gap: 8px;
@@ -134,9 +144,36 @@
     font-size: 12px; font-weight: 600; white-space: nowrap;
   }
 
-  /* Empty / loading */
+  /* Share button */
+  .share-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 14px; border-radius: 14px;
+    background: #25D366; border: none; color: white;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; margin-top: 20px; margin-bottom: 8px;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .share-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .share-note { font-size: 11px; color: var(--mid); text-align: center; margin-bottom: 20px; }
   .state-msg { text-align: center; padding: 48px 20px; color: var(--mid); font-size: 14px; line-height: 1.6; }
   .state-msg .icon { font-size: 36px; margin-bottom: 12px; }
+
+  /* Share button */
+  .share-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; margin-top: 24px;
+    padding: 14px; border-radius: 14px;
+    background: #25D366; border: none; color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(37,211,102,0.3);
+  }
+  .share-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .share-note {
+    text-align: center; font-size: 11.5px;
+    color: var(--mid); margin-top: 8px; margin-bottom: 8px;
+  }
 
   .spinner {
     display: inline-block; width: 14px; height: 14px;
@@ -162,6 +199,7 @@
       <div class="name-dropdown" id="name-dropdown"></div>
     </div>
     <p class="search-hint">Type your full name. If the records are not correct, alert Siew Mui 😝</p>
+    <p class="search-disclaimer">📋 Records shown are from 2023 onwards. We know many of you have been with us much longer — thank you! 💗</p>
   </div>
 
   <div class="results" id="results"></div>
@@ -169,11 +207,8 @@
 </div>
 
 <script>
-const SUPABASE_URL      = 'https://vkmafkzoocdlkgjubwgb.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrbWFma3pvb2NkbGtnanVid2diIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NTUxODAsImV4cCI6MjA4ODUzMTE4MH0.rNDMOJNzWQprzUhm5yROLQIFVbBh7-BRQdGk5b8F17Y';
-const TABLE             = 'TwinkleHearts_Attendance2026';
-const CURRENT_YEAR      = new Date().getFullYear().toString();
-const HEADERS           = { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` };
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyAePMoZGB8njdfZiqqU0C31MNmKuNWM7vtwbwDNPaKvBJqNzK_NuakMxSNEj0CnqjUOA/exec';
+const CURRENT_YEAR    = new Date().getFullYear().toString();
 
 let allNames     = [];
 let selectedName = null;
@@ -183,22 +218,9 @@ loadNames();
 
 async function loadNames() {
   try {
-    const allData = [];
-    const pageSize = 1000;
-    let offset = 0;
-    while (true) {
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/${TABLE}?select=Name&offset=${offset}&limit=${pageSize}`,
-        { headers: { ...HEADERS, 'Range-Unit': 'items', 'Range': `${offset}-${offset + pageSize - 1}`, 'Prefer': 'count=none' } }
-      );
-      const data = await res.json();
-      if (!Array.isArray(data) || data.length === 0) break;
-      allData.push(...data);
-      if (data.length < pageSize) break;
-      offset += pageSize;
-    }
-    const set = new Set(allData.map(r => r.Name?.trim()).filter(Boolean));
-    allNames  = [...set].sort((a, b) => a.localeCompare(b));
+    const res  = await fetch(`${APPS_SCRIPT_URL}?action=getNames`);
+    const data = await res.json();
+    if (data.names) allNames = data.names;
   } catch(e) {
     console.warn('Could not load names', e);
   }
@@ -232,14 +254,10 @@ async function pickName(name) {
   await loadRecords(name);
 }
 
-// Log search to Supabase
+// Log search (silently, non-blocking)
 async function logSearch(name) {
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/TwinkleHearts_AppLogs`, {
-      method: 'POST',
-      headers: { ...HEADERS, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ Name: name })
-    });
+    await fetch(`${APPS_SCRIPT_URL}?action=logSearch&name=${encodeURIComponent(name)}`);
   } catch(e) {
     // Silently fail — logging should never break the app
   }
@@ -250,12 +268,9 @@ async function loadRecords(name) {
   const el = document.getElementById('results');
   el.innerHTML = `<div class="state-msg"><span class="spinner"></span>Loading…</div>`;
   try {
-    const res     = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLE}?Name=eq.${encodeURIComponent(name)}&Attended=eq.true&order=Date.desc&select=Event,Date,Year,Beneficiary`,
-      { headers: HEADERS }
-    );
-    const records = await res.json();
-    renderRecords(name, records);
+    const res     = await fetch(`${APPS_SCRIPT_URL}?action=getRecords&name=${encodeURIComponent(name)}`);
+    const data    = await res.json();
+    renderRecords(name, data.records || []);
   } catch(e) {
     el.innerHTML = `<div class="state-msg"><div class="icon">⚠️</div><p>Could not load records.<br>Please try again.</p></div>`;
   }
@@ -274,9 +289,18 @@ function renderRecords(name, records) {
   }
 
   // Milestone
+  const MILESTONES = [5, 10, 20, 30, 40, 50, 75, 100];
+  const nextMilestone = MILESTONES.find(m => m > total);
+  const nudge = nextMilestone
+    ? `<div class="nudge">🎯 You are <strong>${nextMilestone - total} event${nextMilestone - total !== 1 ? 's' : ''}</strong> away from your next milestone of <strong>${nextMilestone} events</strong>!</div>`
+    : '';
+
   let milestone = '';
-  if      (total >= 50) milestone = `<div class="milestone">🏆 <strong>Champion Volunteer</strong> — ${total} events. You're a legend!</div>`;
-  else if (total >= 25) milestone = `<div class="milestone">⭐ <strong>Star Volunteer</strong> — ${total} events and counting!</div>`;
+  if      (total >= 75) milestone = `<div class="milestone">💎 <strong>Heart of Gold</strong> — ${total} events. Extraordinary!</div>`;
+  else if (total >= 50) milestone = `<div class="milestone">🏆 <strong>Champion Volunteer</strong> — ${total} events. You're a legend!</div>`;
+  else if (total >= 40) milestone = `<div class="milestone">🏅 <strong>Committed Heart</strong> — ${total} events and going strong!</div>`;
+  else if (total >= 30) milestone = `<div class="milestone">🎖️ <strong>Rising Champion</strong> — ${total} events, amazing!</div>`;
+  else if (total >= 20) milestone = `<div class="milestone">⭐ <strong>Star Volunteer</strong> — ${total} events and counting!</div>`;
   else if (total >= 10) milestone = `<div class="milestone">💛 <strong>Dedicated Heart</strong> — ${total} events attended!</div>`;
   else if (total >= 5)  milestone = `<div class="milestone">🌱 <strong>Growing Heart</strong> — ${total} events, keep it up!</div>`;
 
@@ -310,6 +334,7 @@ function renderRecords(name, records) {
 
   el.innerHTML = `
     ${milestone}
+    ${nudge}
     <div class="results-header">
       <div class="results-title">Records for <em>${name}</em></div>
       <div class="results-count">${total} entries</div>
@@ -320,7 +345,39 @@ function renderRecords(name, records) {
       <div class="pill"><div class="pill-dot pink"></div>${thisYr} in ${CURRENT_YEAR}</div>
     </div>
     ${yearHTML}
+    <button class="share-btn" onclick="shareRecord('${name.replace(/'/g, "\\'")}', ${total}, ${years.length}, ${thisYr})">💬 Share my volunteering record</button>
+    <p class="share-note">Opens WhatsApp with a summary of your volunteering journey</p>
   `;
+}
+
+function shareRecord(name, total, yearsActive, thisYr) {
+  // Get milestone tier
+  const tier =
+    total >= 75 ? '💎 Heart of Gold' :
+    total >= 50 ? '🏆 Champion Volunteer' :
+    total >= 40 ? '🏅 Committed Heart' :
+    total >= 30 ? '🎖️ Rising Champion' :
+    total >= 20 ? '⭐ Star Volunteer' :
+    total >= 10 ? '💛 Dedicated Heart' :
+    total >= 5  ? '🌱 Growing Heart' : '💗 Volunteer';
+
+  const msg =
+`💗 *Twinkle Hearts Volunteer*
+
+Hi! I've been volunteering with Twinkle Hearts — bringing joy to our elderly friends at nursing homes.
+
+${tier}
+📊 ${total} events attended
+📅 Active for ${yearsActive} year${yearsActive !== 1 ? 's' : ''}
+🌟 ${thisYr} events in ${CURRENT_YEAR}
+
+Check your own volunteering record at:
+https://siewmuisuper.github.io/twinklehearts/
+
+_Records shown are from 2023 onwards_ 💗`;
+
+  const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
 }
 
 function fmtDate(d) {
