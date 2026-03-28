@@ -4,110 +4,286 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Twinkle Hearts — Attendance</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
+  /* ── Palette: Blush Rose · Sage Teal · Amber Gold ────────── */
   :root {
-    --bg: #f5f0e8;
-    --white: #ffffff;
-    --pink: #c0392b;
-    --pink-light: #fdf0ee;
-    --teal: #2d6a5a;
-    --teal-light: #e8f5f1;
-    --ink: #1a1a1a;
-    --mid: #888;
-    --border: #e8e0d5;
+    --bg:           #fcf8f4;
+    --white:        #ffffff;
+    --rose:         #b83a2e;          /* primary — warm rose red  */
+    --rose-light:   #fdf0ee;
+    --rose-mid:     #e8786a;
+    --teal:         #2d6a5a;          /* secondary — sage teal    */
+    --teal-light:   #eaf5f1;
+    --amber:        #b8820a;          /* accent — amber gold      */
+    --amber-light:  #fef8ec;
+    --amber-mid:    #e0a020;
+    --lavender:     #7b5ea7;          /* miss-you — soft lavender */
+    --lavender-light: #f5f0fc;
+    --ink:          #1c1a18;
+    --ink-mid:      #5a5550;
+    --mid:          #999;
+    --border:       #e8e0d2;
+    --shadow:       rgba(28,26,24,0.07);
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
   body {
     font-family: 'DM Sans', sans-serif;
     background: var(--bg);
     color: var(--ink);
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
   }
 
-  .app { max-width: 680px; margin: 0 auto; padding: 0 0 60px; }
+  .app { max-width: 680px; margin: 0 auto; padding: 0 0 72px; }
 
-  /* Header */
+  /* ── Header ─────────────────────────────────────────────── */
   .header {
-    padding: 28px 20px 0;
-    margin-bottom: 20px;
+    padding: 36px 24px 0;
+    margin-bottom: 28px;
   }
   .header-logo {
     font-family: 'DM Serif Display', serif;
-    font-size: 22px; color: var(--ink);
+    font-size: 24px;
+    color: var(--ink);
+    letter-spacing: -0.02em;
   }
-  .header-logo span { color: var(--pink); }
+  .header-logo span { color: var(--rose); }
+  .header-sub {
+    font-size: 13px;
+    color: var(--mid);
+    margin-top: 4px;
+    font-weight: 400;
+  }
 
-  /* Search */
-  .search-section { padding: 0 20px 6px; }
-  .search-wrap { position: relative; margin-bottom: 6px; }
+  /* ── Search ─────────────────────────────────────────────── */
+  .search-section { padding: 0 24px 0; }
+  .search-wrap { position: relative; margin-bottom: 10px; }
   .search-wrap input {
     width: 100%;
-    padding: 14px 44px 14px 16px;
+    padding: 15px 48px 15px 18px;
     border: 1.5px solid var(--border);
-    border-radius: 14px;
+    border-radius: 16px;
     font-family: 'DM Sans', sans-serif;
     font-size: 15px;
     color: var(--ink);
     background: var(--white);
     outline: none;
-    transition: border-color 0.2s;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px var(--shadow);
   }
-  .search-wrap input:focus { border-color: var(--pink); }
-  .search-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
-  .search-hint { font-size: 12px; color: var(--mid); padding: 0 4px; margin-bottom: 8px; }
-  .search-disclaimer { font-size: 11.5px; color: var(--mid); padding: 0 4px; margin-bottom: 20px; line-height: 1.5; }
+  .search-wrap input::placeholder { color: #bbb; }
+  .search-wrap input:focus {
+    border-color: var(--rose);
+    box-shadow: 0 0 0 3px rgba(184,58,46,0.08);
+  }
+  .search-icon {
+    position: absolute; right: 16px; top: 50%;
+    transform: translateY(-50%); font-size: 16px; pointer-events: none;
+  }
+  .search-disclaimer {
+    font-size: 11px; color: var(--mid);
+    padding: 0 2px; margin-bottom: 24px;
+    line-height: 1.6;
+  }
 
-  /* Dropdown */
+  /* ── Dropdown ───────────────────────────────────────────── */
   .name-dropdown {
-    position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0;
     background: var(--white); border: 1.5px solid var(--border);
-    border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-    max-height: 220px; overflow-y: auto; z-index: 100; display: none;
+    border-radius: 14px; box-shadow: 0 12px 32px var(--shadow);
+    max-height: 240px; overflow-y: auto; z-index: 100; display: none;
   }
   .name-dropdown.show { display: block; }
   .name-option {
-    padding: 11px 16px; font-size: 14px; cursor: pointer;
+    padding: 12px 18px; font-size: 14px; cursor: pointer;
     border-bottom: 1px solid var(--border); transition: background 0.1s;
+    color: var(--ink);
   }
   .name-option:last-child { border-bottom: none; }
-  .name-option:hover { background: var(--pink-light); color: var(--pink); }
+  .name-option:hover { background: var(--rose-light); color: var(--rose); }
 
-  /* Results */
-  .results { padding: 0 20px; }
+  /* ── Results ────────────────────────────────────────────── */
+  .results { padding: 0 24px; }
 
   .results-header {
     display: flex; justify-content: space-between;
-    align-items: baseline; margin-bottom: 14px;
+    align-items: baseline; margin-bottom: 16px;
   }
-  .results-title { font-family: 'DM Serif Display', serif; font-size: 22px; }
-  .results-title em { color: var(--pink); font-style: normal; }
-  .results-count { font-size: 13px; color: var(--mid); font-weight: 500; }
+  .results-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; letter-spacing: -0.01em;
+  }
+  .results-title em { color: var(--rose); font-style: normal; }
+  .results-count {
+    font-size: 12px; color: var(--mid); font-weight: 500;
+    letter-spacing: 0.03em; text-transform: uppercase;
+  }
 
-  /* Pills */
+  /* ── Pills ──────────────────────────────────────────────── */
   .pills { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
   .pill {
     display: flex; align-items: center; gap: 6px;
-    padding: 7px 14px; border-radius: 100px;
-    font-size: 13px; font-weight: 500;
-    border: 1.5px solid var(--border); background: var(--white);
+    padding: 6px 14px; border-radius: 100px;
+    font-size: 12px; font-weight: 500;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    color: var(--ink-mid);
+    box-shadow: 0 1px 3px var(--shadow);
   }
-  .pill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .pill-dot.pink { background: var(--pink); }
-  .pill-dot.teal { background: var(--teal); }
+  .pill-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .pill-dot.rose   { background: var(--rose); }
+  .pill-dot.teal   { background: var(--teal); }
+  .pill-dot.amber  { background: var(--amber-mid); }
 
-  /* Nudge */
+  /* ── Milestone banner ───────────────────────────────────── */
+  .milestone {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 18px; border-radius: 100px;
+    background: var(--amber-light);
+    border: 1.5px solid #e8c870;
+    font-size: 13px; font-weight: 500; color: var(--amber);
+    margin-bottom: 14px; cursor: pointer;
+    transition: all 0.2s; user-select: none;
+  }
+  .milestone:hover {
+    background: #fef3d0; border-color: var(--amber-mid);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(184,130,10,0.18);
+  }
+  .milestone:active { transform: translateY(0); }
+  .milestone-save {
+    margin-left: auto; font-size: 11px; color: #c09020;
+    font-weight: 500; white-space: nowrap;
+    display: flex; align-items: center; gap: 3px;
+  }
+
+  /* ── Nudge ──────────────────────────────────────────────── */
   .nudge {
-    display: flex; align-items: center; gap: 8px;
-    padding: 10px 16px; border-radius: 100px;
-    background: var(--teal-light); border: 1.5px solid var(--teal);
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 18px; border-radius: 100px;
+    background: var(--teal-light); border: 1.5px solid #a8d8cc;
     font-size: 13px; color: var(--teal);
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 
-  /* Badge screen */
+  /* ── Streak ─────────────────────────────────────────────── */
+  .streak {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 16px 18px; border-radius: 18px;
+    background: linear-gradient(135deg, var(--amber-light), #fffdf5);
+    border: 1.5px solid #e9c664; margin-bottom: 14px;
+    animation: fadeUp 0.3s ease both;
+  }
+  .streak-icon { font-size: 26px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
+  .streak-title {
+    font-size: 14px; font-weight: 600; color: var(--amber);
+    margin-bottom: 3px; letter-spacing: -0.01em;
+  }
+  .streak-sub { font-size: 12px; color: #b08820; line-height: 1.5; }
+  .streak-months { display: flex; gap: 5px; margin-top: 10px; flex-wrap: wrap; }
+  .streak-month {
+    padding: 3px 9px; border-radius: 100px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.03em;
+  }
+  .streak-month.active  { background: var(--amber-mid); color: white; }
+  .streak-month.inactive { background: var(--border); color: var(--mid); }
+
+  /* ── We miss you ────────────────────────────────────────── */
+  .miss-you {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 18px; border-radius: 18px;
+    background: linear-gradient(135deg, var(--lavender-light), #faf8ff);
+    border: 1.5px solid #d8c8f0; margin-bottom: 14px;
+    animation: fadeUp 0.3s ease both;
+  }
+  .miss-you-icon { font-size: 30px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+  .miss-you-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px; color: var(--lavender); margin-bottom: 5px;
+  }
+  .miss-you-sub {
+    font-size: 12.5px; color: #8868b0; line-height: 1.6; margin-bottom: 12px;
+  }
+  .miss-you-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 18px; border-radius: 100px;
+    background: var(--lavender); color: white; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(123,94,167,0.25);
+  }
+  .miss-you-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  /* ── Upcoming events ────────────────────────────────────── */
+  .upcoming-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 14px; border-radius: 14px;
+    background: var(--teal); color: white; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; margin-bottom: 24px;
+    box-shadow: 0 4px 14px rgba(45,106,90,0.22);
+    text-decoration: none; letter-spacing: 0.01em;
+  }
+  .upcoming-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  /* ── Year group ─────────────────────────────────────────── */
+  .year-group { margin-bottom: 24px; }
+  .year-divider {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+  }
+  .year-divider::before, .year-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+  .year-divider span {
+    font-size: 11px; color: var(--mid); font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* ── Event card ─────────────────────────────────────────── */
+  .event-card {
+    background: var(--white); border-radius: 14px;
+    padding: 14px 18px; margin-bottom: 8px;
+    box-shadow: 0 1px 5px var(--shadow);
+    display: flex; justify-content: space-between;
+    align-items: center; gap: 12px;
+    animation: fadeUp 0.25s ease both;
+    border: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+  .event-card:hover { border-color: var(--border); }
+  .event-name {
+    font-size: 14px; font-weight: 500; margin-bottom: 5px;
+    color: var(--ink); line-height: 1.3;
+  }
+  .event-meta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .event-meta span { font-size: 12px; color: var(--ink-mid); }
+  .attended-badge {
+    flex-shrink: 0; padding: 5px 12px; border-radius: 100px;
+    background: var(--teal-light); color: var(--teal);
+    font-size: 11px; font-weight: 600; white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── State messages ─────────────────────────────────────── */
+  .state-msg {
+    text-align: center; padding: 56px 24px;
+    color: var(--mid); font-size: 14px; line-height: 1.7;
+  }
+  .state-msg .icon { font-size: 40px; margin-bottom: 14px; }
+
+  .spinner {
+    display: inline-block; width: 16px; height: 16px;
+    border: 2px solid rgba(0,0,0,0.1); border-top-color: var(--rose);
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+    vertical-align: middle; margin-right: 8px;
+  }
+  @keyframes spin   { to { transform: rotate(360deg); } }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── Badge screen ───────────────────────────────────────── */
   .badge-screen {
     display: none; position: fixed; inset: 0;
     background: var(--bg); z-index: 200;
@@ -119,26 +295,25 @@
 
   .badge-back {
     display: flex; align-items: center; gap: 8px;
-    padding: 20px 20px 12px; font-size: 13px;
+    padding: 22px 24px 14px; font-size: 13px;
     color: var(--mid); font-weight: 500; cursor: pointer;
     max-width: 480px; margin: 0 auto;
   }
-  .badge-back:hover { color: var(--pink); }
+  .badge-back:hover { color: var(--rose); }
 
   .badge-card {
-    max-width: 380px; margin: 0 auto 0;
+    max-width: 380px; margin: 0 auto;
     border-radius: 24px; overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    box-shadow: 0 24px 64px rgba(28,26,24,0.16);
     background: var(--white);
   }
-
   .badge-top {
-    padding: 32px 28px 28px; text-align: center;
+    padding: 34px 28px 28px; text-align: center;
     position: relative; overflow: hidden;
   }
   .badge-top::before {
     content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 30% 0%, rgba(255,255,255,0.15) 0%, transparent 60%);
+    background: radial-gradient(ellipse at 30% 0%, rgba(255,255,255,0.18) 0%, transparent 60%);
     pointer-events: none;
   }
   .badge-top::after {
@@ -148,14 +323,14 @@
     bottom: -120px; right: -80px; pointer-events: none;
   }
   .badge-logo {
-    width: 80px; height: auto; margin-bottom: 12px;
+    width: 80px; height: auto; margin-bottom: 14px;
     mix-blend-mode: multiply;
     filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
     position: relative; z-index: 1;
   }
   .badge-icon {
     font-size: 64px; line-height: 1; display: block;
-    margin-bottom: 12px; position: relative; z-index: 1;
+    margin-bottom: 14px; position: relative; z-index: 1;
     filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
     animation: iconPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
   }
@@ -163,19 +338,15 @@
   .badge-title {
     font-family: 'Cormorant Garamond', serif;
     font-size: 28px; font-weight: 700; color: white;
-    line-height: 1.1; margin-bottom: 6px;
-    position: relative; z-index: 1;
+    line-height: 1.1; margin-bottom: 6px; position: relative; z-index: 1;
   }
   .badge-tagline {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic; font-size: 14px;
-    color: rgba(255,255,255,0.75); line-height: 1.5;
-    position: relative; z-index: 1;
-    max-width: 260px; margin: 0 auto;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 14px; color: rgba(255,255,255,0.78); line-height: 1.55;
+    position: relative; z-index: 1; max-width: 260px; margin: 0 auto;
   }
   .badge-body {
-    padding: 24px 28px 24px; text-align: center;
-    background: var(--white);
+    padding: 24px 28px; text-align: center; background: var(--white);
   }
   .badge-volunteer-name {
     font-family: 'Cormorant Garamond', serif;
@@ -184,96 +355,49 @@
   }
   .badge-volunteer-sub {
     font-size: 11px; color: var(--mid);
-    margin-bottom: 20px; letter-spacing: 0.05em;
+    margin-bottom: 20px; letter-spacing: 0.06em; text-transform: uppercase;
   }
   .badge-stats {
     display: flex; border: 1.5px solid var(--border);
-    border-radius: 14px; overflow: hidden; margin-bottom: 16px;
+    border-radius: 14px; overflow: hidden; margin-bottom: 0;
   }
   .badge-stat { flex: 1; padding: 14px 10px; text-align: center; }
   .badge-stat + .badge-stat { border-left: 1.5px solid var(--border); }
   .badge-stat-num {
     font-family: 'Cormorant Garamond', serif;
     font-size: 28px; font-weight: 700;
-    color: var(--pink); line-height: 1; margin-bottom: 3px;
+    color: var(--rose); line-height: 1; margin-bottom: 4px;
   }
-  .badge-stat-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mid); }
+  .badge-stat-lbl {
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.12em; color: var(--mid);
+  }
 
   /* Badge themes */
-  .theme-5   { background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%); }
-  .theme-10  { background: linear-gradient(135deg, #f39c12 0%, #c47d0a 100%); }
-  .theme-20  { background: linear-gradient(135deg, #8e44ad 0%, #6c3483 100%); }
-  .theme-30  { background: linear-gradient(135deg, #2980b9 0%, #1a5f8a 100%); }
+  .theme-5   { background: linear-gradient(135deg, #2ea84a 0%, #1e7a36 100%); }
+  .theme-10  { background: linear-gradient(135deg, #d4920e 0%, #a86e08 100%); }
+  .theme-20  { background: linear-gradient(135deg, #7b5ea7 0%, #5a3d88 100%); }
+  .theme-30  { background: linear-gradient(135deg, #2472a4 0%, #185580 100%); }
   .theme-40  { background: linear-gradient(135deg, #2d6a5a 0%, #1a4a3a 100%); }
-  .theme-50  { background: linear-gradient(135deg, #cd7f32 0%, #a0522d 100%); }
-  .theme-75  { background: linear-gradient(135deg, #c0392b 0%, #922b21 50%, #c9952a 100%); }
-  .theme-100 { background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 50%, #c9952a 100%); }
+  .theme-50  { background: linear-gradient(135deg, #b06428 0%, #884a18 100%); }
+  .theme-75  { background: linear-gradient(135deg, #b83a2e 0%, #8a2218 50%, #c9952a 100%); }
+  .theme-100 { background: linear-gradient(135deg, #181614 0%, #2a2420 50%, #c9952a 100%); }
 
   /* Save button */
   .btn-save {
     display: flex; align-items: center; justify-content: center; gap: 8px;
     width: 100%; padding: 16px; border-radius: 14px;
-    background: var(--pink); color: white; border: none;
+    background: var(--rose); color: white; border: none;
     font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
     cursor: pointer; transition: all 0.2s;
-    box-shadow: 0 4px 16px rgba(192,57,43,0.25);
-    margin-top: 16px;
+    box-shadow: 0 4px 16px rgba(184,58,46,0.28);
+    margin-top: 18px;
   }
   .btn-save:hover { opacity: 0.9; transform: translateY(-1px); }
-  .btn-save-note { text-align: center; font-size: 11.5px; color: var(--mid); margin-top: 8px; }
-
-  /* Milestone — tappable */
-  .milestone {
-    display: flex; align-items: center; gap: 8px;
-    padding: 10px 16px; border-radius: 100px;
-    background: #fef9ec; border: 1.5px solid #f0d870;
-    font-size: 13px; font-weight: 500; color: #7a5f10;
-    margin-bottom: 20px; cursor: pointer;
-    transition: all 0.2s; user-select: none;
+  .btn-save-note {
+    text-align: center; font-size: 12px; color: var(--mid);
+    margin-top: 8px; line-height: 1.5;
   }
-  .milestone:hover { background: #fef3d0; border-color: #e0c040; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(192,150,40,0.2); }
-  .milestone:active { transform: translateY(0); }
-  .milestone-save { margin-left: auto; font-size: 11px; color: #a07820; font-weight: 500; white-space: nowrap; display: flex; align-items: center; gap: 3px; }
-
-  /* Year group */
-  .year-group { margin-bottom: 20px; }
-  .year-divider {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
-  }
-  .year-divider::before, .year-divider::after {
-    content: ''; flex: 1; height: 1px; background: var(--border);
-  }
-  .year-divider span { font-size: 13px; color: var(--mid); font-weight: 500; }
-
-  /* Event card */
-  .event-card {
-    background: var(--white); border-radius: 14px;
-    padding: 14px 16px; margin-bottom: 8px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    display: flex; justify-content: space-between;
-    align-items: center; gap: 12px;
-    animation: fadeUp 0.25s ease both;
-  }
-  @keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
-  .event-name { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
-  .event-meta { display: flex; gap: 12px; flex-wrap: wrap; }
-  .event-meta span { font-size: 12px; color: var(--mid); }
-  .attended-badge {
-    flex-shrink: 0; padding: 5px 12px; border-radius: 100px;
-    background: var(--teal-light); color: var(--teal);
-    font-size: 12px; font-weight: 600; white-space: nowrap;
-  }
-
-  .state-msg { text-align: center; padding: 48px 20px; color: var(--mid); font-size: 14px; line-height: 1.6; }
-  .state-msg .icon { font-size: 36px; margin-bottom: 12px; }
-
-  .spinner {
-    display: inline-block; width: 14px; height: 14px;
-    border: 2px solid rgba(0,0,0,0.1); border-top-color: var(--pink);
-    border-radius: 50%; animation: spin 0.7s linear infinite;
-    vertical-align: middle; margin-right: 6px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -282,20 +406,20 @@
 
   <div class="header">
     <div class="header-logo">Twinkle <span>Hearts</span> 💗</div>
+    <div class="header-sub">Your volunteering journey</div>
   </div>
 
   <div class="search-section">
     <div class="search-wrap">
-      <input type="text" id="name-input" placeholder="Type your name…" autocomplete="off">
+      <input type="text" id="name-input" placeholder="Type your name here to find your records" autocomplete="off">
       <span class="search-icon">🔍</span>
       <div class="name-dropdown" id="name-dropdown"></div>
     </div>
-    <p class="search-hint">Type your full name. If the records are not correct, alert Siew Mui 😝</p>
-    <p class="search-disclaimer">📋 Records shown are from 2023 onwards. We know many of you have been with us much longer — thank you! 💗</p>
+    <p class="search-disclaimer">📋Records shown are from 2023 onwards. We know many of you have been with us much longer — thank you! 💗</p>
+    <p class="search-disclaimer" style="font-size:11px; color:#bbb; margin-top:-16px;">🔒Your attendance data is stored securely for recognition purposes only. Contact Siew Mui to request corrections or removal.</p>
   </div>
 
   <div class="results" id="results"></div>
-
 
   <!-- Badge Screen -->
   <div class="badge-screen" id="badge-screen">
@@ -328,13 +452,17 @@
         </div>
       </div>
       <button class="btn-save" id="btn-save" onclick="saveBadge()">📥 Save Badge Image</button>
-      <div class="btn-save-note">Save to your phone and share anywhere 💗</div>
+      <div class="btn-save-note">Save to your device and share anywhere 💗</div>
     </div>
   </div>
+
 </div>
 
 <script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxIo-mwzQV84Z5qgBTI9cvJHZCFaNr3NXtNuiLf1v3tlEZtZrewaVHDoOY2E3vNuIFCHw/exec';
+
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpknimNFTbixX_0Q70z8YAZTG98B3LZGVWhIOEiraDPb0DNHkRc5o3Z98KI3hvpek_bg/exec';
+const API_TOKEN       = 'TH2026_secure';
+const SIGNUP_URL      = 'https://d3upt3he1kghkh.cloudfront.net/';
 const CURRENT_YEAR    = new Date().getFullYear().toString();
 
 let allNames     = [];
@@ -345,7 +473,7 @@ loadNames();
 
 async function loadNames() {
   try {
-    const res  = await fetch(`${APPS_SCRIPT_URL}?action=getNames`);
+    const res  = await fetch(`${APPS_SCRIPT_URL}?action=getNames&token=${API_TOKEN}`);
     const data = await res.json();
     if (data.names) allNames = data.names;
   } catch(e) {
@@ -384,7 +512,7 @@ async function pickName(name) {
 // Log search (silently, non-blocking)
 async function logSearch(name) {
   try {
-    await fetch(`${APPS_SCRIPT_URL}?action=logSearch&name=${encodeURIComponent(name)}`);
+    await fetch(`${APPS_SCRIPT_URL}?action=logSearch&name=${encodeURIComponent(name)}&token=${API_TOKEN}`);
   } catch(e) {
     // Silently fail — logging should never break the app
   }
@@ -395,7 +523,7 @@ async function loadRecords(name) {
   const el = document.getElementById('results');
   el.innerHTML = `<div class="state-msg"><span class="spinner"></span>Loading…</div>`;
   try {
-    const res     = await fetch(`${APPS_SCRIPT_URL}?action=getRecords&name=${encodeURIComponent(name)}`);
+    const res     = await fetch(`${APPS_SCRIPT_URL}?action=getRecords&name=${encodeURIComponent(name)}&token=${API_TOKEN}`);
     const data    = await res.json();
     renderRecords(name, data.records || []);
   } catch(e) {
@@ -430,7 +558,47 @@ function renderRecords(name, records) {
        </div>`
     : '';
 
-  // Group by year
+  // ── Streak & miss you ──────────────────────────────────────
+  const lastDate  = records[0]?.Date || '';
+  const ago       = monthsAgoFromDate(lastDate);
+  const missYou   = ago >= 3;
+  const { streak, months } = calcStreak(records);
+  const firstName = name.split(' ')[0];
+
+  let streakHTML = '';
+  if (!missYou && streak >= 2) {
+    const monthDots = months.map(m => `<span class="streak-month active">${shortMonth(m)}</span>`).join('');
+    const msg = streak >= 12
+      ? `You've shown up every single month for a year — extraordinary! 🎉`
+      : streak >= 6
+      ? `You've been showing up consistently for ${streak} months!`
+      : `You've attended at least once every month — keep it going!`;
+    streakHTML = `
+      <div class="streak">
+        <div class="streak-icon">🔥</div>
+        <div>
+          <div class="streak-title">${streak}-month streak!</div>
+          <div class="streak-sub">${msg}</div>
+          <div class="streak-months">${monthDots}</div>
+        </div>
+      </div>`;
+  }
+
+  let missYouHTML = '';
+  if (missYou) {
+    missYouHTML = `
+      <div class="miss-you">
+        <div class="miss-you-icon">💜</div>
+        <div>
+          <div class="miss-you-title">We miss you, ${firstName}!</div>
+          <div class="miss-you-sub">It's been a while since we last saw you — your last event was ${fmtDate(lastDate)}. Your ${total} contributions are still here, and we'd love to see you again whenever you're ready. 💗</div>
+          <button class="miss-you-btn" onclick="window.open('${SIGNUP_URL}', '_blank')">🗓️ See upcoming events</button>
+        </div>
+      </div>`;
+  }
+
+  const upcomingHTML = `<a href="${SIGNUP_URL}" target="_blank" class="upcoming-btn">🗓️ View Upcoming Events</a>`;
+
   const byYear = {};
   records.forEach(r => {
     const yr = String(r.Year || 'Unknown');
@@ -460,6 +628,8 @@ function renderRecords(name, records) {
 
   el.innerHTML = `
     ${milestone}
+    ${streakHTML}
+    ${missYouHTML}
     ${nudge}
     <div class="results-header">
       <div class="results-title">Records for <em>${name}</em></div>
@@ -470,16 +640,46 @@ function renderRecords(name, records) {
       <div class="pill"><div class="pill-dot teal"></div>${years.length} year${years.length !== 1 ? 's' : ''}</div>
       <div class="pill"><div class="pill-dot pink"></div>${thisYr} in ${CURRENT_YEAR}</div>
     </div>
+    ${upcomingHTML}
     ${yearHTML}
   `;
+}
+
+// ── Helper functions ──────────────────────────────────────────
+function calcStreak(records) {
+  if (!records.length) return { streak: 0, months: [] };
+  const monthSet = new Set(records.map(r => r.Date ? r.Date.substring(0, 7) : null).filter(Boolean));
+  const sorted   = [...monthSet].sort().reverse();
+  if (!sorted.length) return { streak: 0, months: [] };
+  let streak = 1;
+  let months = [sorted[0]];
+  for (let i = 1; i < sorted.length; i++) {
+    const [y1, m1] = sorted[i-1].split('-').map(Number);
+    const [y2, m2] = sorted[i].split('-').map(Number);
+    if ((y1 - y2) * 12 + (m1 - m2) === 1) { streak++; months.push(sorted[i]); }
+    else break;
+  }
+  return { streak, months };
+}
+
+function monthsAgoFromDate(dateStr) {
+  if (!dateStr) return 99;
+  const last = new Date(dateStr);
+  const now  = new Date();
+  return (now.getFullYear() - last.getFullYear()) * 12 + (now.getMonth() - last.getMonth());
+}
+
+function shortMonth(ym) {
+  const [y, m] = ym.split('-');
+  return new Date(y, m-1).toLocaleString('en-SG', { month: 'short' });
 }
 
 // ── Milestone data ───────────────────────────────────────────
 function getMilestoneData(total) {
   if (total >= 100) return { icon: '👑', title: 'Twinkle Hearts Legend', tagline: '100 events of pure heart — you are truly legendary!', theme: 'theme-100' };
-  if (total >= 75)  return { icon: '💗', title: 'Inspiring Heart',        tagline: 'Your love and care touches so many lives!',          theme: 'theme-75'  };
+  if (total >= 75)  return { icon: '💗', title: 'Inspiring Heart',        tagline: 'Your love touches so many lives - you are inspirational!',          theme: 'theme-75'  };
   if (total >= 50)  return { icon: '🏆', title: 'Champion Volunteer',     tagline: "50 moments of joy — you're a legend in the making!", theme: 'theme-50'  };
-  if (total >= 40)  return { icon: '🎖️', title: 'Rising Champion',       tagline: "40 contributions — you're a force of good!",         theme: 'theme-40'  };
+  if (total >= 40)  return { icon: '🎖️', title: 'Rising Champion',       tagline: "40 priceless contributions — you're a force of good!",         theme: 'theme-40'  };
   if (total >= 30)  return { icon: '💪', title: 'Committed Heart',        tagline: 'Your dedication inspires us all!',                   theme: 'theme-30'  };
   if (total >= 20)  return { icon: '⭐', title: 'Star Volunteer',         tagline: '20 contributions and still shining bright!',         theme: 'theme-20'  };
   if (total >= 10)  return { icon: '💛', title: 'Dedicated Heart',        tagline: 'Your commitment is making a difference!',            theme: 'theme-10'  };
@@ -539,6 +739,7 @@ function fmtDate(d) {
   if (!d) return '';
   return new Date(d).toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' });
 }
+
 </script>
 </body>
 </html>
