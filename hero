@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backstage Heroes | Volunteer Recognition</title>
+    <style>
+        :root {
+            --bg:            #fcf8f4;
+            --white:         #ffffff;
+            --rose:          #b83a2e;          /* primary — warm rose red  */
+            --rose-light:    #fdf0ee;
+            --rose-mid:      #e8786a;
+            --teal:          #2d6a5a;          /* secondary — sage teal    */
+            --teal-light:    #eaf5f1;
+            --amber:         #b8820a;          /* accent — amber gold      */
+            --amber-light:   #fef8ec;
+            --amber-mid:     #e0a020;
+            --lavender:      #7b5ea7;          /* soft lavender */
+            --lavender-light: #f5f0fc;
+            --ink:           #1c1a18;
+            --ink-mid:       #5a5550;
+            --mid:           #999;
+            --border:        #e8e0d2;
+            --shadow:        rgba(28,26,24,0.07);
+        }
+
+        body {
+            font-family: 'Georgia', serif; /* A more elegant font for this palette */
+            background-color: var(--bg);
+            color: var(--ink);
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        header h1 { 
+            color: var(--rose); 
+            font-size: 3rem; 
+            margin: 10px 0;
+            font-weight: normal;
+        }
+
+        .subtitle {
+            color: var(--ink-mid);
+            font-family: sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        /* The Main Spotlight Card */
+        .spotlight-card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 15px 35px var(--shadow);
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            overflow: hidden;
+            margin-bottom: 80px;
+            border: 1px solid var(--border);
+        }
+
+        .hero-image {
+            background: var(--rose-light);
+            min-height: 450px;
+            background-image: url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800'); /* Sample Nature/Logistics vibe */
+            background-size: cover;
+            background-position: center;
+        }
+
+        .hero-content {
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .main-badge {
+            display: inline-block;
+            background: var(--rose-light);
+            color: var(--rose);
+            padding: 6px 16px;
+            border-radius: 4px;
+            font-family: sans-serif;
+            font-weight: bold;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            width: fit-content;
+            margin-bottom: 20px;
+        }
+
+        .hero-name { 
+            font-size: 2.8rem; 
+            margin: 0; 
+            color: var(--ink);
+            line-height: 1.1;
+        }
+
+        .hero-role { 
+            color: var(--teal); 
+            font-family: sans-serif;
+            font-weight: 600; 
+            margin: 15px 0 25px 0; 
+            font-size: 1.1rem;
+        }
+
+        .hero-quote { 
+            font-size: 1.2rem;
+            color: var(--ink-mid);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        /* Stats Section */
+        .stats-row {
+            display: flex;
+            gap: 20px;
+            border-top: 1px solid var(--border);
+            padding-top: 30px;
+        }
+
+        .stat-box { flex: 1; }
+
+        .stat-value { 
+            display: block; 
+            font-size: 1.5rem; 
+            color: var(--rose); 
+            font-weight: bold;
+        }
+
+        .stat-label { 
+            font-family: sans-serif;
+            font-size: 0.7rem; 
+            color: var(--mid); 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Past Heroes Grid */
+        .history-section { margin-top: 40px; }
+        .history-header {
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .past-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 8px;
+            border-bottom: 4px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .past-card:hover {
+            border-bottom-color: var(--teal);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px var(--shadow);
+        }
+
+        .past-name { font-size: 1.4rem; color: var(--ink); display: block; }
+        .past-date { 
+            font-family: sans-serif;
+            font-size: 0.8rem; 
+            color: var(--lavender); 
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .past-description { color: var(--ink-mid); font-size: 0.95rem; }
+
+        @media (max-width: 850px) {
+            .spotlight-card { grid-template-columns: 1fr; }
+            .hero-image { min-height: 300px; }
+            .hero-content { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <span class="subtitle">Community Pillars</span>
+        <h1>The Backstage Spotlight</h1>
+    </header>
+
+    <section class="spotlight-card">
+        <div class="hero-image"></div>
+        <div class="hero-content">
+            <div class="main-badge">Featured Contributor</div>
+            <h2 class="hero-name">Alex Chen</h2>
+            <div class="hero-role">Logistics & Site Operations</div>
+            
+            <p class="hero-quote">
+                "Finding the right space and ensuring every detail is in place is how I contribute to our collective success."
+            </p>
+
+            <div class="stats-row">
+                <div class="stat-box">
+                    <span class="stat-value">12</span>
+                    <span class="stat-label">Site Recces</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value">45+</span>
+                    <span class="stat-label">Deliveries</span>
+                </div>
+                <div class="stat-box" style="color: var(--amber);">
+                    <span class="stat-value" style="color: var(--amber);">Gold</span>
+                    <span class="stat-label">Efficiency</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="history-section">
+        <div class="history-header">
+            <h3 style="margin:0; font-weight: normal; font-size: 1.8rem;">Previous Heroes</h3>
+            <span style="color: var(--mid); font-size: 0.8rem; font-family: sans-serif;">Archives 2026</span>
+        </div>
+
+        <div class="grid">
+            <div class="past-card">
+                <span class="past-date">MARCH 2026</span>
+                <span class="past-name">Sarah Jenkins</span>
+                <p class="past-description">Handled the complex financial audits and expense collations for the regional workshop.</p>
+            </div>
+            
+            <div class="past-card" style="border-bottom-color: var(--lavender-light);">
+                <span class="past-date" style="color: var(--teal);">FEBRUARY 2026</span>
+                <span class="past-name">Jordan Lee</span>
+               <p class="past-description">Coordinated catering and bulk orders for over 200 volunteers during the annual summit.</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+</body>
+</html>
