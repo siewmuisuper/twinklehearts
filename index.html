@@ -384,10 +384,9 @@ nameInput.addEventListener('input', () => {
   if (q.length < 1) { nameDropdown.classList.remove('show'); return; }
   const matches = allNames.filter(n => n.toLowerCase().includes(q)).slice(0, 8);
   if (!matches.length) { nameDropdown.classList.remove('show'); return; }
-  nameDropdown.innerHTML = matches.map(n =>
-    `<div class="name-option" onclick="pickName('${n.replace(/'/g, "\'")}')"">${n}</div>`
-  ).join('');
+  nameDropdown.innerHTML = matches.map(n => `<div class="name-option" data-name="${n.replace(/"/g,'&quot;')}">${n}</div>`).join('');
   nameDropdown.classList.add('show');
+  nameDropdown.querySelectorAll('.name-option').forEach(el => el.addEventListener('click', () => pickName(el.dataset.name)));
 });
 
 document.addEventListener('click', e => {
