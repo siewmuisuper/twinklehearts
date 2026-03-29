@@ -356,7 +356,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 
 <script>
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpknimNFTbixX_0Q70z8YAZTG98B3LZGVWhIOEiraDPb0DNHkRc5o3Z98KI3hvpek_bg/exec';
-const API_TOKEN       = 'TH2026_secure';
+
 const SIGNUP_URL      = 'https://d3upt3he1kghkh.cloudfront.net/';
 const CURRENT_YEAR    = new Date().getFullYear().toString();
 
@@ -369,7 +369,7 @@ loadNames();
 
 async function loadNames() {
   try {
-    const res  = await fetch(`${APPS_SCRIPT_URL}?action=getNames&token=${API_TOKEN}`);
+    const res  = await fetch(`${APPS_SCRIPT_URL}?action=getNames`, { redirect: 'follow' });
     const data = await res.json();
     if (data.names) allNames = data.names;
   } catch(e) { console.warn('Could not load names', e); }
@@ -403,14 +403,14 @@ async function pickName(name) {
 }
 
 async function logSearch(name) {
-  try { await fetch(`${APPS_SCRIPT_URL}?action=logSearch&name=${encodeURIComponent(name)}&token=${API_TOKEN}`); } catch(e) {}
+  try { await fetch(`${APPS_SCRIPT_URL}?action=logSearch&name=${encodeURIComponent(name)}`, { redirect: 'follow' }); } catch(e) {}
 }
 
 async function loadRecords(name) {
   const el = document.getElementById('results');
   el.innerHTML = `<div class="state-msg"><span class="spinner"></span>Loading…</div>`;
   try {
-    const res  = await fetch(`${APPS_SCRIPT_URL}?action=getRecords&name=${encodeURIComponent(name)}&token=${API_TOKEN}`);
+    const res  = await fetch(`${APPS_SCRIPT_URL}?action=getRecords&name=${encodeURIComponent(name)}`, { redirect: 'follow' });
     const data = await res.json();
     renderRecords(name, data.records || []);
   } catch(e) {
