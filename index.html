@@ -260,62 +260,96 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 .upcoming-btn:hover { opacity:.9; transform:translateY(-1px); }
 
 /* ═══════════════════════════════════════════════════════════
-   SAVE SCREEN — all badges side by side
+   SAVE SCREEN — badges redesigned for consistency
 ═══════════════════════════════════════════════════════════ */
 .save-screen { display:none; position:fixed; inset:0; background:var(--bg); z-index:300; overflow-y:auto; padding-bottom:60px; animation:slideUp .3s ease both; }
 .save-screen.show { display:block; }
 .save-back { display:flex; align-items:center; gap:8px; padding:22px 24px 14px; font-size:13px; color:var(--mid); font-weight:500; cursor:pointer; max-width:640px; margin:0 auto; }
 .save-back:hover { color:var(--navy); }
 .save-inner { padding:0 20px; max-width:640px; margin:0 auto; }
-.save-heading { font-family:'DM Serif Display',serif; font-size:20px; color:var(--ink); margin-bottom:3px; text-align:center; }
-.save-sub { font-size:12px; color:var(--mid); text-align:center; margin-bottom:20px; line-height:1.5; }
+.save-heading { font-family:'DM Serif Display',serif; font-size:22px; color:var(--ink); margin-bottom:4px; text-align:center; }
+.save-sub { font-size:12px; color:var(--mid); text-align:center; margin-bottom:24px; line-height:1.5; }
 
-/* Badge row — captured as one image */
+/* Badge row wrapper */
 #sv-badges {
-  display:flex; gap:8px; align-items:stretch;
-  padding:16px; background:var(--white);
-  border-radius:20px; box-shadow:0 2px 16px var(--shadow-sm);
+  display:flex; gap:10px; align-items:stretch;
+  padding:20px; background:var(--bg);
+  border-radius:24px;
+  border:1.5px solid var(--border);
+}
+#sv-badges.sv-single { justify-content:center; }
+#sv-badges.sv-single .mb-ms { flex:none; width:260px; }
+
+/* ── Shared badge shell ── */
+.mb-hero,
+.mb-ms {
+  flex:1; border-radius:16px; overflow:hidden;
+  box-shadow:0 6px 24px rgba(27,42,74,.14);
+  min-width:0; display:flex; flex-direction:column;
 }
 
-/* Mini hero badge */
-.mb-hero { flex:1; border-radius:14px; overflow:hidden; box-shadow:0 4px 16px rgba(27,42,74,.16); min-width:0; }
-.mb-hero-top { background:linear-gradient(145deg,var(--navy) 0%,var(--navy-mid) 100%); padding:16px 12px 12px; text-align:center; position:relative; overflow:hidden; }
-.mb-hero-top::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 20% 10%,rgba(201,149,42,.2) 0%,transparent 60%); pointer-events:none; }
-.mb-rule { width:24px; height:2px; background:var(--gold); margin:0 auto 8px; border-radius:2px; position:relative; z-index:1; }
-.mb-hero-lbl { font-size:7px; letter-spacing:.15em; text-transform:uppercase; color:var(--gold-dim); font-weight:600; margin-bottom:6px; position:relative; z-index:1; }
-.mb-hero-icon { font-size:28px; display:block; margin-bottom:6px; position:relative; z-index:1; filter:drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
-.mb-hero-title { font-family:'Cormorant Garamond',serif; font-size:12px; font-weight:700; color:white; line-height:1.2; margin-bottom:3px; position:relative; z-index:1; }
-.mb-hero-tagline { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:9px; color:rgba(255,255,255,.6); line-height:1.4; position:relative; z-index:1; }
-.mb-body { padding:10px 10px 12px; text-align:center; background:var(--white); }
-.mb-name   { font-family:'Cormorant Garamond',serif; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:3px; }
-.mb-role   { display:inline-flex; padding:2px 8px; border-radius:100px; background:var(--navy-light); font-size:8px; font-weight:600; color:var(--navy); letter-spacing:.04em; text-transform:uppercase; margin-bottom:3px; }
+/* ── Hero badge top ── */
+.mb-hero-top {
+  background:linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%);
+  padding:20px 14px 16px; text-align:center;
+  position:relative; overflow:hidden;
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+}
+.mb-hero-top::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 20% 15%,rgba(201,149,42,.22) 0%,transparent 60%);
+  pointer-events:none;
+}
+.mb-rule { width:28px; height:2px; background:var(--gold); margin:0 auto 8px; border-radius:2px; position:relative; z-index:1; flex-shrink:0; }
+.mb-hero-lbl { font-size:7.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold-dim); font-weight:700; margin-bottom:10px; position:relative; z-index:1; flex-shrink:0; }
+.mb-hero-icon { font-size:32px; display:block; margin-bottom:10px; position:relative; z-index:1; filter:drop-shadow(0 2px 8px rgba(0,0,0,.3)); flex-shrink:0; }
+.mb-hero-title { font-family:'Cormorant Garamond',serif; font-size:14px; font-weight:700; color:white; line-height:1.2; margin-bottom:6px; position:relative; z-index:1; flex-shrink:0; }
+.mb-hero-tagline { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:10px; color:rgba(255,255,255,.62); line-height:1.45; position:relative; z-index:1; }
+
+/* ── Milestone badge top ── */
+.mb-ms-top {
+  padding:20px 14px 16px; text-align:center;
+  position:relative; overflow:hidden;
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+}
+.mb-ms-top::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 30% 10%,rgba(255,255,255,.2) 0%,transparent 55%);
+  pointer-events:none;
+}
+.mb-ms-lbl { font-size:7.5px; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.75); font-weight:700; margin-bottom:10px; position:relative; z-index:1; flex-shrink:0; }
+.mb-ms-icon { font-size:32px; display:block; margin-bottom:10px; position:relative; z-index:1; filter:drop-shadow(0 2px 8px rgba(0,0,0,.2)); flex-shrink:0; }
+.mb-ms-title { font-family:'Cormorant Garamond',serif; font-size:14px; font-weight:700; color:white; line-height:1.2; margin-bottom:6px; position:relative; z-index:1; flex-shrink:0; }
+.mb-ms-tagline { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:10px; color:rgba(255,255,255,.65); line-height:1.45; position:relative; z-index:1; }
+
+/* ── Shared badge body ── */
+.mb-body, .mb-ms-body {
+  padding:12px 12px 14px; text-align:center;
+  background:var(--white); flex-shrink:0;
+  border-top:1px solid var(--border);
+}
+.mb-name, .mb-ms-name {
+  font-family:'Cormorant Garamond',serif;
+  font-size:13px; font-weight:600; color:var(--ink); margin-bottom:4px; line-height:1.2;
+}
+.mb-role {
+  display:inline-flex; padding:2px 9px; border-radius:100px;
+  background:var(--navy-light); font-size:8px; font-weight:600;
+  color:var(--navy); letter-spacing:.05em; text-transform:uppercase; margin-bottom:3px;
+}
 .mb-tenure { font-size:8px; color:var(--mid); }
-
-/* Mini milestone badge */
-.mb-ms { flex:1; border-radius:14px; overflow:hidden; box-shadow:0 4px 16px var(--shadow-sm); min-width:0; }
-.mb-ms-top { padding:16px 12px 12px; text-align:center; position:relative; overflow:hidden; }
-.mb-ms-top::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 30% 0%,rgba(255,255,255,.18) 0%,transparent 55%); pointer-events:none; }
-.mb-ms-lbl    { font-size:7px; letter-spacing:.15em; text-transform:uppercase; color:rgba(255,255,255,.72); font-weight:600; margin-bottom:6px; position:relative; z-index:1; }
-.mb-ms-icon   { font-size:28px; display:block; margin-bottom:6px; position:relative; z-index:1; filter:drop-shadow(0 2px 6px rgba(0,0,0,.2)); }
-.mb-ms-title  { font-family:'Cormorant Garamond',serif; font-size:12px; font-weight:700; color:white; line-height:1.2; margin-bottom:3px; position:relative; z-index:1; }
-.mb-ms-tagline{ font-family:'Cormorant Garamond',serif; font-style:italic; font-size:9px; color:rgba(255,255,255,.62); line-height:1.4; position:relative; z-index:1; }
-.mb-ms-body   { padding:10px 10px 12px; text-align:center; background:var(--white); }
-.mb-ms-name   { font-family:'Cormorant Garamond',serif; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:3px; }
-.mb-ms-count  { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:700; color:var(--rose); line-height:1; }
-.mb-ms-lbl2   { font-size:8px; text-transform:uppercase; letter-spacing:.08em; color:var(--mid); margin-top:2px; }
-
-/* Badge theme colours */
-.t5   { background:linear-gradient(135deg,#2ea84a,#1e7a36); }
-.t10  { background:linear-gradient(135deg,#d4920e,#a86e08); }
-.t20  { background:linear-gradient(135deg,#7b5ea7,#5a3d88); }
-.t30  { background:linear-gradient(135deg,#2472a4,#185580); }
-.t40  { background:linear-gradient(135deg,#2d6a5a,#1a4a3a); }
-.t50  { background:linear-gradient(135deg,#b06428,#884a18); }
-.t75  { background:linear-gradient(135deg,#b83a2e,#8a2218 50%,#c9952a); }
-.t100 { background:linear-gradient(135deg,#181614,#2a2420 50%,#c9952a); }
+.mb-ms-count { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:var(--rose); line-height:1; }
+.mb-ms-lbl2 { font-size:8px; text-transform:uppercase; letter-spacing:.1em; color:var(--mid); margin-top:2px; }
 
 /* Save button */
-.btn-sv-save { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:15px; border-radius:14px; background:var(--navy); color:white; border:none; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; cursor:pointer; transition:all .2s; box-shadow:0 4px 16px rgba(27,42,74,.26); margin-top:16px; }
+.btn-sv-save {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  width:100%; padding:15px; border-radius:14px;
+  background:var(--navy); color:white; border:none;
+  font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600;
+  cursor:pointer; transition:all .2s;
+  box-shadow:0 4px 16px rgba(27,42,74,.26); margin-top:16px;
+}
 .btn-sv-save:hover { opacity:.9; transform:translateY(-1px); }
 .btn-sv-note { text-align:center; font-size:12px; color:var(--mid); margin-top:8px; line-height:1.5; }
 </style>
@@ -354,8 +388,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
   </div>
 </div>
 
-<script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbws4RgpMgZy2-Mjw7GgEw8eQMU8xXoBmbS3ECwaxb64CVixKF7oeX7mhybNEUn38_0PqQ/exec';
+<script defer>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyhVPDPFSIVuvhnuoFaWEG1BlUypV34TNw0Q4uudyASyegw1ZpGW0FWY2G9WdHWAMHcPQ/exec';
 
 const SIGNUP_URL      = 'https://d3upt3he1kghkh.cloudfront.net/';
 const CURRENT_YEAR    = new Date().getFullYear().toString();
@@ -366,6 +400,7 @@ let currentName  = '';
 let currentTotal = 0;
 
 loadNames();
+const heroesReady = loadHeroes();
 
 async function loadNames() {
   try {
@@ -409,7 +444,11 @@ async function loadRecords(name) {
   const el = document.getElementById('results');
   el.innerHTML = `<div class="state-msg"><span class="spinner"></span>Loading…</div>`;
   try {
-    const res  = await fetch(`${APPS_SCRIPT_URL}?action=getRecords&name=${encodeURIComponent(name)}`, { redirect: 'follow' });
+    // Fetch records and heroes in parallel, wait for both
+    const [res] = await Promise.all([
+      fetch(`${APPS_SCRIPT_URL}?action=getRecords&name=${encodeURIComponent(name)}`, { redirect: 'follow' }),
+      heroesReady
+    ]);
     const data = await res.json();
     renderRecords(name, data.records || []);
   } catch(e) {
@@ -417,36 +456,16 @@ async function loadRecords(name) {
   }
 }
 
-/* ── Hero data ────────────────────────────────────────────── */
-const HERO_DATA = {
-  'Joe Tan': [
-    { icon:'🚛', title:'Logistics Guardian',        tagline:'Keeping everything running smoothly behind the scenes',       role:'Logistics Director',          tenure:'Since 2018' },
-    { icon:'🚐', title:'Project Joy Delivery Hero', tagline:'Bringing warmth and food to AMK and CSU with a smile',       role:'Project Joy — Food Delivery', tenure:'Since 2023' },
-  ],
-  'Chin Mee Shyan': [
-    { icon:'💰', title:'Finance Steward',            tagline:'Safeguarding our resources with care and integrity',          role:'Finance Officer',             tenure:'Since 2012' },
-    { icon:'🗺️', title:'Master Planner',             tagline:'Turning ideas into moments that matter',                     role:'Master Planner',              tenure:'Since 2011' },
-  ],
-  'Pan Wen':           [{ icon:'🗺️', title:'Master Planner', tagline:'Turning ideas into moments that matter', role:'Master Planner', tenure:'Since 2021' }],
-  'Ritesh Maheshwari': [{ icon:'🗺️', title:'Master Planner', tagline:'Turning ideas into moments that matter', role:'Master Planner', tenure:'Since 2023' }],
-  'Royce Wong': [
-    { icon:'🗺️', title:'Master Planner',             tagline:'Turning ideas into moments that matter',                     role:'Master Planner',              tenure:'Since 2021' },
-    { icon:'🍱', title:'Project Joy Coordinator',    tagline:'Nourishing our elderly friends with love and dedication',    role:'Project Joy — Food Ordering', tenure:'Since 2023' },
-  ],
-  'Linn':        [{ icon:'🗺️', title:'Master Planner', tagline:'Turning ideas into moments that matter', role:'Master Planner', tenure:'Since 2023' }],
-  'Bernice Bay': [{ icon:'🗺️', title:'Master Planner', tagline:'Turning ideas into moments that matter', role:'Master Planner', tenure:'Since 2023' }],
-  'Sze Min':     [{ icon:'🗺️', title:'Master Planner', tagline:'Turning ideas into moments that matter', role:'Master Planner', tenure:'Since 2011' }],
-  'Shirley Chua': [
-    { icon:'🛒', title:'Procurement Champion',       tagline:'Sourcing with heart so every key event shines',              role:'Purchasing Director',         tenure:'Since 2015' },
-    { icon:'🍱', title:'Project Joy Coordinator',    tagline:'Nourishing our elderly friends with love and dedication',    role:'Project Joy — Food Ordering', tenure:'Since 2023' },
-  ],
-  'Yvonne Ng': [{ icon:'🍱', title:'Project Joy Coordinator', tagline:'Nourishing our elderly friends with love and dedication', role:'Project Joy — Food Ordering', tenure:'Since 2025' }],
-  'Deborah': [
-    { icon:'🛒', title:'Procurement Champion',       tagline:'Sourcing with heart so every key event shines',              role:'Purchasing Director',         tenure:'Since 2024' },
-    { icon:'🍱', title:'Project Joy Coordinator',    tagline:'Nourishing our elderly friends with love and dedication',    role:'Project Joy — Food Ordering', tenure:'Since 2024' },
-    { icon:'📊', title:'Project Joy Treasurer',      tagline:"Keeping Project Joy's finances accountable and transparent", role:'Project Joy — Finance',       tenure:'Since 2024' },
-  ],
-};
+/* ── Hero data — loaded from Google Sheet ───────────────── */
+let HERO_DATA = {};
+
+async function loadHeroes() {
+  try {
+    const res  = await fetch(`${APPS_SCRIPT_URL}?action=getHeroes`, { redirect: 'follow' });
+    const data = await res.json();
+    if (data.heroes) HERO_DATA = data.heroes;
+  } catch(e) { console.warn('Could not load heroes', e); }
+}
 
 /* ── Milestone data ──────────────────────────────────────── */
 function getMilestoneData(total) {
@@ -532,7 +551,7 @@ function renderRecords(name, records) {
 
   let missYouHTML = '';
   if (missYou) {
-    missYouHTML = `<div class="miss-you"><div class="miss-you-icon">💜</div><div><div class="miss-you-title">We miss you, ${firstName}!</div><div class="miss-you-sub">It's been a while — your last event was ${fmtDate(lastDate)}. Your ${total} contributions are still here, and we'd love to see you again whenever you're ready. 💗</div><button class="miss-you-btn" onclick="window.open('${SIGNUP_URL}','_blank')">🗓️ See upcoming events</button></div></div>`;
+    missYouHTML = `<div class="miss-you"><div class="miss-you-icon">💜</div><div><div class="miss-you-title">We miss you, ${name}!</div><div class="miss-you-sub">It's been a while — your last event was ${fmtDate(lastDate)}. Your ${total} contributions are still here, and we'd love to see you again whenever you're ready. 💗</div><button class="miss-you-btn" onclick="window.open('${SIGNUP_URL}','_blank')">🗓️ See upcoming events</button></div></div>`;
   }
 
   /* ── Hero cards ── */
@@ -551,7 +570,7 @@ function renderRecords(name, records) {
         <div class="hero-card-tagline">${h.tagline}</div>
         <div class="hero-card-footer">
           <div class="hero-card-tenure">${h.role} · ${h.tenure}</div>
-          <div class="hero-card-save">Save badges →</div>
+          
         </div>
       </div>`).join('');
     heroCardsHTML = `<div class="${gridClass}">${cards}</div>`;
@@ -594,7 +613,7 @@ function renderRecords(name, records) {
   /* ── Assemble ── */
   el.innerHTML = `
     <div class="board-section">
-      <div class="board-title">${firstName}'s Board</div>
+      <div class="board-title">${name}'s Board</div>
       ${milestoneHTML}
       ${nudgeHTML}
       ${streakHTML}
@@ -621,10 +640,13 @@ const THEME_COLS = { t5:'#2ea84a', t10:'#d4920e', t20:'#7b5ea7', t30:'#2472a4', 
 function openSaveScreen() {
   const heroes = HERO_DATA[currentName] || [];
   const ms     = getMilestoneData(currentTotal);
-  document.getElementById('sv-name').textContent = currentName + ''s Badges';
+  document.getElementById('sv-name').textContent = currentName + "'s Badges";
+  const badgesEl = document.getElementById('sv-badges');
+  badgesEl.classList.toggle('sv-single', heroes.length === 0);
   let html = '';
   heroes.forEach(h => {
-    html += `<div class="mb-hero">
+    html += `
+    <div class="mb-hero">
       <div class="mb-hero-top">
         <div class="mb-rule"></div>
         <div class="mb-hero-lbl">✦ Backstage Hero</div>
@@ -641,8 +663,9 @@ function openSaveScreen() {
   });
   if (ms) {
     const col = THEME_COLS[ms.theme] || '#2472a4';
-    html += `<div class="mb-ms">
-      <div class="mb-ms-top" style="background:linear-gradient(145deg,${col} 0%,${col}bb 100%)">
+    html += `
+    <div class="mb-ms">
+      <div class="mb-ms-top" style="background:linear-gradient(160deg,${col} 0%,${col}cc 100%)">
         <div class="mb-ms-lbl">Volunteering</div>
         <span class="mb-ms-icon">${ms.icon}</span>
         <div class="mb-ms-title">${ms.title}</div>
@@ -655,7 +678,7 @@ function openSaveScreen() {
       </div>
     </div>`;
   }
-  document.getElementById('sv-badges').innerHTML = html;
+  badgesEl.innerHTML = html;
   const btn = document.getElementById('btn-sv-save');
   btn.innerHTML = '📥 Save All My Badges';
   btn.disabled  = false;
