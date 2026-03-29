@@ -7,401 +7,320 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-  /* ── Palette: Blush Rose · Sage Teal · Amber Gold ────────── */
-  :root {
-    --bg:           #fcf8f4;
-    --white:        #ffffff;
-    --rose:         #b83a2e;          /* primary — warm rose red  */
-    --rose-light:   #fdf0ee;
-    --rose-mid:     #e8786a;
-    --teal:         #2d6a5a;          /* secondary — sage teal    */
-    --teal-light:   #eaf5f1;
-    --amber:        #b8820a;          /* accent — amber gold      */
-    --amber-light:  #fef8ec;
-    --amber-mid:    #e0a020;
-    --lavender:     #7b5ea7;          /* miss-you — soft lavender */
-    --lavender-light: #f5f0fc;
-    --ink:          #1c1a18;
-    --ink-mid:      #5a5550;
-    --mid:          #999;
-    --border:       #e8e0d2;
-    --shadow:       rgba(28,26,24,0.07);
-  }
+/* ═══════════════════════════════════════════════════════════
+   PALETTE — Blush Rose · Sage Teal · Amber Gold
+   Navy · Lavender — all harmonised
+═══════════════════════════════════════════════════════════ */
+:root {
+  --bg:             #f7f2ea;
+  --white:          #ffffff;
+  --rose:           #b83a2e;
+  --rose-light:     #fdf0ee;
+  --teal:           #2d6a5a;
+  --teal-light:     #eaf5f1;
+  --teal-border:    #a8d8cc;
+  --amber:          #b8820a;
+  --amber-light:    #fef8ec;
+  --amber-border:   #e8c870;
+  --lavender:       #7b5ea7;
+  --lavender-light: #f5f0fc;
+  --lavender-border:#d8c8f0;
+  --navy:           #1b2a4a;
+  --navy-mid:       #243660;
+  --navy-light:     #eef2f8;
+  --navy-border:    #c8d4e8;
+  --gold:           #c9952a;
+  --gold-dim:       rgba(201,149,42,0.85);
+  --ink:            #1c1a18;
+  --ink-mid:        #5a5550;
+  --mid:            #9a9490;
+  --border:         #e8e0d2;
+  --shadow-sm:      rgba(28,26,24,0.06);
+  --shadow-md:      rgba(28,26,24,0.10);
+}
 
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-  }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; -webkit-font-smoothing:antialiased; }
 
-  .app { max-width: 680px; margin: 0 auto; padding: 0 0 72px; }
+@keyframes fadeUp  { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideUp { from{transform:translateY(40px);opacity:0} to{transform:translateY(0);opacity:1} }
+@keyframes spin    { to{transform:rotate(360deg)} }
+@keyframes iconPop { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
 
-  /* ── Header ─────────────────────────────────────────────── */
-  .header {
-    padding: 36px 24px 0;
-    margin-bottom: 28px;
-  }
-  .header-logo {
-    font-family: 'DM Serif Display', serif;
-    font-size: 24px;
-    color: var(--ink);
-    letter-spacing: -0.02em;
-  }
-  .header-logo span { color: var(--rose); }
-  .header-sub {
-    font-size: 13px;
-    color: var(--mid);
-    margin-top: 4px;
-    font-weight: 400;
-  }
+.app { max-width:600px; margin:0 auto; padding:0 0 72px; }
 
-  /* ── Search ─────────────────────────────────────────────── */
-  .search-section { padding: 0 24px 0; }
-  .search-wrap { position: relative; margin-bottom: 10px; }
-  .search-wrap input {
-    width: 100%;
-    padding: 15px 48px 15px 18px;
-    border: 1.5px solid var(--border);
-    border-radius: 16px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    color: var(--ink);
-    background: var(--white);
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 8px var(--shadow);
-  }
-  .search-wrap input::placeholder { color: #bbb; }
-  .search-wrap input:focus {
-    border-color: var(--rose);
-    box-shadow: 0 0 0 3px rgba(184,58,46,0.08);
-  }
-  .search-icon {
-    position: absolute; right: 16px; top: 50%;
-    transform: translateY(-50%); font-size: 16px; pointer-events: none;
-  }
-  .search-disclaimer {
-    font-size: 11px; color: var(--mid);
-    padding: 0 2px; margin-bottom: 24px;
-    line-height: 1.6;
-  }
+/* ── Header ──────────────────────────────────────────────── */
+.header { padding:32px 24px 0; margin-bottom:24px; }
+.header-logo { font-family:'DM Serif Display',serif; font-size:24px; color:var(--ink); letter-spacing:-.02em; }
+.header-logo span { color:var(--rose); }
+.header-sub { font-size:13px; color:var(--mid); margin-top:4px; font-weight:400; }
 
-  /* ── Dropdown ───────────────────────────────────────────── */
-  .name-dropdown {
-    position: absolute; top: calc(100% + 6px); left: 0; right: 0;
-    background: var(--white); border: 1.5px solid var(--border);
-    border-radius: 14px; box-shadow: 0 12px 32px var(--shadow);
-    max-height: 240px; overflow-y: auto; z-index: 100; display: none;
-  }
-  .name-dropdown.show { display: block; }
-  .name-option {
-    padding: 12px 18px; font-size: 14px; cursor: pointer;
-    border-bottom: 1px solid var(--border); transition: background 0.1s;
-    color: var(--ink);
-  }
-  .name-option:last-child { border-bottom: none; }
-  .name-option:hover { background: var(--rose-light); color: var(--rose); }
+/* ── Search ──────────────────────────────────────────────── */
+.search-section { padding:0 24px; }
+.search-wrap { position:relative; margin-bottom:10px; }
+.search-wrap input {
+  width:100%; padding:15px 48px 15px 18px;
+  border:1.5px solid var(--border); border-radius:16px;
+  font-family:'DM Sans',sans-serif; font-size:15px; color:var(--ink);
+  background:var(--white); outline:none;
+  transition:border-color .2s, box-shadow .2s;
+  box-shadow:0 2px 8px var(--shadow-sm);
+}
+.search-wrap input::placeholder { color:#c8c0b8; }
+.search-wrap input:focus { border-color:var(--rose); box-shadow:0 0 0 3px rgba(184,58,46,.08); }
+.search-icon { position:absolute; right:16px; top:50%; transform:translateY(-50%); font-size:16px; pointer-events:none; }
+.search-disclaimer { font-size:11px; color:var(--mid); padding:0 2px; margin-bottom:8px; line-height:1.6; }
 
-  /* ── Results ────────────────────────────────────────────── */
-  .results { padding: 0 24px; }
+/* ── Dropdown ────────────────────────────────────────────── */
+.name-dropdown { position:absolute; top:calc(100% + 6px); left:0; right:0; background:var(--white); border:1.5px solid var(--border); border-radius:14px; box-shadow:0 12px 32px var(--shadow-md); max-height:240px; overflow-y:auto; z-index:100; display:none; }
+.name-dropdown.show { display:block; }
+.name-option { padding:12px 18px; font-size:14px; cursor:pointer; border-bottom:1px solid var(--border); transition:background .1s; color:var(--ink); }
+.name-option:last-child { border-bottom:none; }
+.name-option:hover { background:var(--rose-light); color:var(--rose); }
 
-  .results-header {
-    display: flex; justify-content: space-between;
-    align-items: baseline; margin-bottom: 16px;
-  }
-  .results-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 22px; letter-spacing: -0.01em;
-  }
-  .results-title em { color: var(--rose); font-style: normal; }
-  .results-count {
-    font-size: 12px; color: var(--mid); font-weight: 500;
-    letter-spacing: 0.03em; text-transform: uppercase;
-  }
+/* ── Results wrapper ─────────────────────────────────────── */
+.results { padding:0 24px; }
 
-  /* ── Pills ──────────────────────────────────────────────── */
-  .pills { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-  .pill {
-    display: flex; align-items: center; gap: 6px;
-    padding: 6px 14px; border-radius: 100px;
-    font-size: 12px; font-weight: 500;
-    border: 1.5px solid var(--border);
-    background: var(--white);
-    color: var(--ink-mid);
-    box-shadow: 0 1px 3px var(--shadow);
-  }
-  .pill-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-  .pill-dot.rose   { background: var(--rose); }
-  .pill-dot.teal   { background: var(--teal); }
-  .pill-dot.amber  { background: var(--amber-mid); }
+/* ── State messages ──────────────────────────────────────── */
+.state-msg { text-align:center; padding:56px 24px; color:var(--mid); font-size:14px; line-height:1.7; }
+.state-msg .icon { font-size:40px; margin-bottom:14px; }
+.spinner { display:inline-block; width:14px; height:14px; border:2px solid rgba(0,0,0,.1); border-top-color:var(--rose); border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:6px; }
 
-  /* ── Milestone banner ───────────────────────────────────── */
-  .milestone {
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px 18px; border-radius: 100px;
-    background: var(--amber-light);
-    border: 1.5px solid #e8c870;
-    font-size: 13px; font-weight: 500; color: var(--amber);
-    margin-bottom: 14px; cursor: pointer;
-    transition: all 0.2s; user-select: none;
-  }
-  .milestone:hover {
-    background: #fef3d0; border-color: var(--amber-mid);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(184,130,10,0.18);
-  }
-  .milestone:active { transform: translateY(0); }
-  .milestone-save {
-    margin-left: auto; font-size: 11px; color: #c09020;
-    font-weight: 500; white-space: nowrap;
-    display: flex; align-items: center; gap: 3px;
-  }
+/* ═══════════════════════════════════════════════════════════
+   BOARD SECTION — identity, achievement, motivation
+═══════════════════════════════════════════════════════════ */
+.board-section { animation:fadeUp .3s ease both; }
+.board-title { font-family:'DM Serif Display',serif; font-size:22px; color:var(--ink); margin-bottom:16px; letter-spacing:-.01em; }
 
-  /* ── Nudge ──────────────────────────────────────────────── */
-  .nudge {
-    display: flex; align-items: center; gap: 10px;
-    padding: 11px 18px; border-radius: 100px;
-    background: var(--teal-light); border: 1.5px solid #a8d8cc;
-    font-size: 13px; color: var(--teal);
-    margin-bottom: 16px;
-  }
+/* Milestone pill — amber, read-only */
+.milestone-pill {
+  display:flex; align-items:center; gap:8px;
+  padding:11px 18px; border-radius:100px;
+  background:var(--amber-light); border:1.5px solid var(--amber-border);
+  font-size:13px; font-weight:500; color:var(--amber);
+  margin-bottom:12px;
+}
 
-  /* ── Streak ─────────────────────────────────────────────── */
-  .streak {
-    display: flex; align-items: flex-start; gap: 14px;
-    padding: 16px 18px; border-radius: 18px;
-    background: linear-gradient(135deg, var(--amber-light), #fffdf5);
-    border: 1.5px solid #e9c664; margin-bottom: 14px;
-    animation: fadeUp 0.3s ease both;
-  }
-  .streak-icon { font-size: 26px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
-  .streak-title {
-    font-size: 14px; font-weight: 600; color: var(--amber);
-    margin-bottom: 3px; letter-spacing: -0.01em;
-  }
-  .streak-sub { font-size: 12px; color: #b08820; line-height: 1.5; }
-  .streak-months { display: flex; gap: 5px; margin-top: 10px; flex-wrap: wrap; }
-  .streak-month {
-    padding: 3px 9px; border-radius: 100px;
-    font-size: 10px; font-weight: 600; letter-spacing: 0.03em;
-  }
-  .streak-month.active  { background: var(--amber-mid); color: white; }
-  .streak-month.inactive { background: var(--border); color: var(--mid); }
+/* Nudge — teal */
+.nudge {
+  display:flex; align-items:center; gap:10px;
+  padding:11px 18px; border-radius:100px;
+  background:var(--teal-light); border:1.5px solid var(--teal-border);
+  font-size:13px; color:var(--teal); margin-bottom:12px;
+}
 
-  /* ── We miss you ────────────────────────────────────────── */
-  .miss-you {
-    display: flex; align-items: flex-start; gap: 14px;
-    padding: 18px; border-radius: 18px;
-    background: linear-gradient(135deg, var(--lavender-light), #faf8ff);
-    border: 1.5px solid #d8c8f0; margin-bottom: 14px;
-    animation: fadeUp 0.3s ease both;
-  }
-  .miss-you-icon { font-size: 30px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
-  .miss-you-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 16px; color: var(--lavender); margin-bottom: 5px;
-  }
-  .miss-you-sub {
-    font-size: 12.5px; color: #8868b0; line-height: 1.6; margin-bottom: 12px;
-  }
-  .miss-you-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 8px 18px; border-radius: 100px;
-    background: var(--lavender); color: white; border: none;
-    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
-    cursor: pointer; transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(123,94,167,0.25);
-  }
-  .miss-you-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+/* Streak — vibrant warm orange */
+.streak {
+  display:flex; align-items:flex-start; gap:14px;
+  padding:16px 18px; border-radius:18px;
+  background:linear-gradient(135deg, #ff9a3c 0%, #ffb347 45%, #ffd280 100%);
+  margin-bottom:12px; position:relative; overflow:hidden;
+  box-shadow:0 4px 18px rgba(200,120,20,.2);
+  animation:fadeUp .3s ease both;
+}
+.streak::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 10% 50%,rgba(255,255,255,.28) 0%,transparent 60%); pointer-events:none; }
+.streak-icon { font-size:26px; line-height:1; flex-shrink:0; margin-top:2px; position:relative; z-index:1; }
+.streak-content { flex:1; position:relative; z-index:1; }
+.streak-title { font-size:14px; font-weight:700; color:#5a2800; margin-bottom:3px; letter-spacing:-.01em; }
+.streak-sub   { font-size:12px; color:#7a3a00; line-height:1.5; }
+.streak-months { display:flex; gap:5px; margin-top:10px; flex-wrap:wrap; }
+.streak-month { padding:4px 10px; border-radius:100px; font-size:10px; font-weight:700; letter-spacing:.04em; }
+.streak-month.active   { background:rgba(90,40,0,.82); color:#ffd280; }
+.streak-month.inactive { background:rgba(255,255,255,.32); color:rgba(90,40,0,.5); }
 
-  /* ── Upcoming events ────────────────────────────────────── */
-  .upcoming-btn {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: 100%; padding: 14px; border-radius: 14px;
-    background: var(--teal); color: white; border: none;
-    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
-    cursor: pointer; transition: all 0.2s; margin-bottom: 24px;
-    box-shadow: 0 4px 14px rgba(45,106,90,0.22);
-    text-decoration: none; letter-spacing: 0.01em;
-  }
-  .upcoming-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+/* We miss you — lavender */
+.miss-you {
+  display:flex; align-items:flex-start; gap:14px;
+  padding:18px; border-radius:18px;
+  background:linear-gradient(135deg, var(--lavender-light), #faf8ff);
+  border:1.5px solid var(--lavender-border); margin-bottom:12px;
+  animation:fadeUp .3s ease both;
+}
+.miss-you-icon { font-size:30px; line-height:1; flex-shrink:0; margin-top:2px; }
+.miss-you-title { font-family:'DM Serif Display',serif; font-size:16px; color:var(--lavender); margin-bottom:5px; }
+.miss-you-sub { font-size:12.5px; color:#8868b0; line-height:1.6; margin-bottom:12px; }
+.miss-you-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:8px 18px; border-radius:100px;
+  background:var(--lavender); color:white; border:none;
+  font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600;
+  cursor:pointer; transition:all .2s;
+  box-shadow:0 2px 8px rgba(123,94,167,.25);
+}
+.miss-you-btn:hover { opacity:.88; transform:translateY(-1px); }
 
-  /* ── Year group ─────────────────────────────────────────── */
-  .year-group { margin-bottom: 24px; }
-  .year-divider {
-    display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
-  }
-  .year-divider::before, .year-divider::after {
-    content: ''; flex: 1; height: 1px; background: var(--border);
-  }
-  .year-divider span {
-    font-size: 11px; color: var(--mid); font-weight: 600;
-    letter-spacing: 0.1em; text-transform: uppercase;
-  }
+/* Hero cards — navy, side by side for ≤2, grid for 3+ */
+.hero-grid-1 { display:block; margin-bottom:12px; }
+.hero-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+.hero-grid-3 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
 
-  /* ── Event card ─────────────────────────────────────────── */
-  .event-card {
-    background: var(--white); border-radius: 14px;
-    padding: 14px 18px; margin-bottom: 8px;
-    box-shadow: 0 1px 5px var(--shadow);
-    display: flex; justify-content: space-between;
-    align-items: center; gap: 12px;
-    animation: fadeUp 0.25s ease both;
-    border: 1px solid transparent;
-    transition: border-color 0.15s;
-  }
-  .event-card:hover { border-color: var(--border); }
-  .event-name {
-    font-size: 14px; font-weight: 500; margin-bottom: 5px;
-    color: var(--ink); line-height: 1.3;
-  }
-  .event-meta { display: flex; gap: 12px; flex-wrap: wrap; }
-  .event-meta span { font-size: 12px; color: var(--ink-mid); }
-  .attended-badge {
-    flex-shrink: 0; padding: 5px 12px; border-radius: 100px;
-    background: var(--teal-light); color: var(--teal);
-    font-size: 11px; font-weight: 600; white-space: nowrap;
-    letter-spacing: 0.02em;
-  }
+.hero-card {
+  background:linear-gradient(145deg, var(--navy) 0%, var(--navy-mid) 100%);
+  border-radius:16px; padding:16px 16px 14px;
+  cursor:pointer; transition:transform .2s, box-shadow .2s;
+  position:relative; overflow:hidden;
+  animation:fadeUp .3s ease both;
+  box-shadow:0 4px 20px rgba(27,42,74,.18);
+}
+.hero-card::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 15% 20%,rgba(201,149,42,.18) 0%,transparent 55%);
+  pointer-events:none;
+}
+.hero-card:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(27,42,74,.26); }
 
-  /* ── State messages ─────────────────────────────────────── */
-  .state-msg {
-    text-align: center; padding: 56px 24px;
-    color: var(--mid); font-size: 14px; line-height: 1.7;
-  }
-  .state-msg .icon { font-size: 40px; margin-bottom: 14px; }
+.hero-card-top { display:flex; align-items:center; gap:12px; margin-bottom:8px; position:relative; z-index:1; }
+.hero-icon {
+  width:44px; height:44px; border-radius:12px; flex-shrink:0;
+  background:rgba(201,149,42,.18); border:1.5px solid rgba(201,149,42,.35);
+  display:flex; align-items:center; justify-content:center; font-size:20px;
+}
+.hero-card-meta { flex:1; min-width:0; }
+.hero-card-label { font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold-dim); font-weight:600; margin-bottom:3px; }
+.hero-card-title { font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:700; color:white; line-height:1.1; }
+.hero-card-tagline { font-size:11px; color:rgba(255,255,255,.58); line-height:1.4; font-style:italic; margin-bottom:10px; position:relative; z-index:1; }
+.hero-card-footer { border-top:1px solid rgba(255,255,255,.1); padding-top:8px; position:relative; z-index:1; display:flex; justify-content:space-between; align-items:center; }
+.hero-card-tenure { font-size:10px; color:rgba(201,149,42,.78); font-weight:500; }
+.hero-card-save   { font-size:10px; color:rgba(201,149,42,.78); font-weight:600; }
 
-  .spinner {
-    display: inline-block; width: 16px; height: 16px;
-    border: 2px solid rgba(0,0,0,0.1); border-top-color: var(--rose);
-    border-radius: 50%; animation: spin 0.7s linear infinite;
-    vertical-align: middle; margin-right: 8px;
-  }
-  @keyframes spin   { to { transform: rotate(360deg); } }
-  @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+/* Save all badges button — navy */
+.btn-save-all {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  width:100%; padding:14px; border-radius:14px;
+  background:var(--navy); color:white; border:none;
+  font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600;
+  cursor:pointer; transition:all .2s; margin-top:2px;
+  box-shadow:0 4px 14px rgba(27,42,74,.22);
+}
+.btn-save-all:hover { opacity:.9; transform:translateY(-1px); }
 
-  /* ── Badge screen ───────────────────────────────────────── */
-  .badge-screen {
-    display: none; position: fixed; inset: 0;
-    background: var(--bg); z-index: 200;
-    overflow-y: auto; padding-bottom: 60px;
-    animation: slideUp 0.3s ease both;
-  }
-  .badge-screen.show { display: block; }
-  @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+/* Board → Records divider */
+.board-divider { height:1px; background:var(--border); margin:24px 0; }
 
-  .badge-back {
-    display: flex; align-items: center; gap: 8px;
-    padding: 22px 24px 14px; font-size: 13px;
-    color: var(--mid); font-weight: 500; cursor: pointer;
-    max-width: 480px; margin: 0 auto;
-  }
-  .badge-back:hover { color: var(--rose); }
+/* ═══════════════════════════════════════════════════════════
+   RECORDS SECTION
+═══════════════════════════════════════════════════════════ */
+.records-section { animation:fadeUp .4s ease both; }
+.results-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; }
+.results-title { font-family:'DM Serif Display',serif; font-size:20px; letter-spacing:-.01em; }
+.results-title em { color:var(--rose); font-style:normal; }
+.results-count { font-size:12px; color:var(--mid); font-weight:500; letter-spacing:.03em; text-transform:uppercase; }
 
-  .badge-card {
-    max-width: 380px; margin: 0 auto;
-    border-radius: 24px; overflow: hidden;
-    box-shadow: 0 24px 64px rgba(28,26,24,0.16);
-    background: var(--white);
-  }
-  .badge-top {
-    padding: 34px 28px 28px; text-align: center;
-    position: relative; overflow: hidden;
-  }
-  .badge-top::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 30% 0%, rgba(255,255,255,0.18) 0%, transparent 60%);
-    pointer-events: none;
-  }
-  .badge-top::after {
-    content: ''; position: absolute;
-    width: 280px; height: 280px; border-radius: 50%;
-    background: rgba(255,255,255,0.06);
-    bottom: -120px; right: -80px; pointer-events: none;
-  }
-  .badge-logo {
-    width: 80px; height: auto; margin-bottom: 14px;
-    mix-blend-mode: multiply;
-    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
-    position: relative; z-index: 1;
-  }
-  .badge-icon {
-    font-size: 64px; line-height: 1; display: block;
-    margin-bottom: 14px; position: relative; z-index: 1;
-    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
-    animation: iconPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
-  }
-  @keyframes iconPop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  .badge-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 28px; font-weight: 700; color: white;
-    line-height: 1.1; margin-bottom: 6px; position: relative; z-index: 1;
-  }
-  .badge-tagline {
-    font-family: 'Cormorant Garamond', serif; font-style: italic;
-    font-size: 14px; color: rgba(255,255,255,0.78); line-height: 1.55;
-    position: relative; z-index: 1; max-width: 260px; margin: 0 auto;
-  }
-  .badge-body {
-    padding: 24px 28px; text-align: center; background: var(--white);
-  }
-  .badge-volunteer-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 26px; font-weight: 600;
-    color: var(--ink); margin-bottom: 4px; line-height: 1.2;
-  }
-  .badge-volunteer-sub {
-    font-size: 11px; color: var(--mid);
-    margin-bottom: 20px; letter-spacing: 0.06em; text-transform: uppercase;
-  }
-  .badge-stats {
-    display: flex; border: 1.5px solid var(--border);
-    border-radius: 14px; overflow: hidden; margin-bottom: 0;
-  }
-  .badge-stat { flex: 1; padding: 14px 10px; text-align: center; }
-  .badge-stat + .badge-stat { border-left: 1.5px solid var(--border); }
-  .badge-stat-num {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 28px; font-weight: 700;
-    color: var(--rose); line-height: 1; margin-bottom: 4px;
-  }
-  .badge-stat-lbl {
-    font-size: 10px; text-transform: uppercase;
-    letter-spacing: 0.12em; color: var(--mid);
-  }
+/* Hero role pills — navy, above standard pills */
+.hero-pills { display:flex; flex-direction:column; gap:5px; margin-bottom:8px; }
+.hero-pill {
+  display:inline-flex; align-items:center; gap:7px;
+  padding:5px 13px; border-radius:100px;
+  background:var(--navy-light); border:1.5px solid var(--navy-border);
+  font-size:11.5px; font-weight:600; color:var(--navy); width:fit-content;
+}
+.hero-pill-dot { width:5px; height:5px; border-radius:50%; background:var(--gold); flex-shrink:0; }
+.hero-pill-sep { color:#a0b0cc; font-weight:400; margin:0 1px; }
 
-  /* Badge themes */
-  .theme-5   { background: linear-gradient(135deg, #2ea84a 0%, #1e7a36 100%); }
-  .theme-10  { background: linear-gradient(135deg, #d4920e 0%, #a86e08 100%); }
-  .theme-20  { background: linear-gradient(135deg, #7b5ea7 0%, #5a3d88 100%); }
-  .theme-30  { background: linear-gradient(135deg, #2472a4 0%, #185580 100%); }
-  .theme-40  { background: linear-gradient(135deg, #2d6a5a 0%, #1a4a3a 100%); }
-  .theme-50  { background: linear-gradient(135deg, #b06428 0%, #884a18 100%); }
-  .theme-75  { background: linear-gradient(135deg, #b83a2e 0%, #8a2218 50%, #c9952a 100%); }
-  .theme-100 { background: linear-gradient(135deg, #181614 0%, #2a2420 50%, #c9952a 100%); }
+/* Standard pills */
+.pills { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.pill {
+  display:flex; align-items:center; gap:6px; padding:6px 13px;
+  border-radius:100px; font-size:12px; font-weight:500;
+  border:1.5px solid var(--border); background:var(--white); color:var(--ink-mid);
+}
+.pill-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.pill-dot.rose { background:var(--rose); }
+.pill-dot.teal { background:var(--teal); }
 
-  /* Save button */
-  .btn-save {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: 100%; padding: 16px; border-radius: 14px;
-    background: var(--rose); color: white; border: none;
-    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
-    cursor: pointer; transition: all 0.2s;
-    box-shadow: 0 4px 16px rgba(184,58,46,0.28);
-    margin-top: 18px;
-  }
-  .btn-save:hover { opacity: 0.9; transform: translateY(-1px); }
-  .btn-save-note {
-    text-align: center; font-size: 12px; color: var(--mid);
-    margin-top: 8px; line-height: 1.5;
-  }
+/* Year divider */
+.year-group { margin-bottom:20px; }
+.year-divider { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+.year-divider::before,.year-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+.year-divider span { font-size:11px; color:var(--mid); font-weight:600; letter-spacing:.1em; text-transform:uppercase; }
+
+/* Event card */
+.event-card {
+  background:var(--white); border-radius:14px; padding:14px 18px; margin-bottom:8px;
+  box-shadow:0 1px 5px var(--shadow-sm);
+  display:flex; justify-content:space-between; align-items:center; gap:12px;
+  animation:fadeUp .25s ease both;
+  border:1px solid transparent; transition:border-color .15s;
+}
+.event-card:hover { border-color:var(--border); }
+.event-name { font-size:14px; font-weight:500; margin-bottom:4px; color:var(--ink); line-height:1.3; }
+.event-meta { display:flex; gap:10px; flex-wrap:wrap; }
+.event-meta span { font-size:12px; color:var(--ink-mid); }
+.attended-badge { flex-shrink:0; padding:5px 12px; border-radius:100px; background:var(--teal-light); color:var(--teal); font-size:11px; font-weight:600; white-space:nowrap; }
+
+/* Upcoming events — teal */
+.upcoming-btn {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  width:100%; padding:14px; border-radius:14px;
+  background:var(--teal); color:white; border:none;
+  font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600;
+  cursor:pointer; transition:all .2s; margin-top:8px;
+  box-shadow:0 4px 14px rgba(45,106,90,.22); text-decoration:none;
+}
+.upcoming-btn:hover { opacity:.9; transform:translateY(-1px); }
+
+/* ═══════════════════════════════════════════════════════════
+   SAVE SCREEN — all badges side by side
+═══════════════════════════════════════════════════════════ */
+.save-screen { display:none; position:fixed; inset:0; background:var(--bg); z-index:300; overflow-y:auto; padding-bottom:60px; animation:slideUp .3s ease both; }
+.save-screen.show { display:block; }
+.save-back { display:flex; align-items:center; gap:8px; padding:22px 24px 14px; font-size:13px; color:var(--mid); font-weight:500; cursor:pointer; max-width:640px; margin:0 auto; }
+.save-back:hover { color:var(--navy); }
+.save-inner { padding:0 20px; max-width:640px; margin:0 auto; }
+.save-heading { font-family:'DM Serif Display',serif; font-size:20px; color:var(--ink); margin-bottom:3px; text-align:center; }
+.save-sub { font-size:12px; color:var(--mid); text-align:center; margin-bottom:20px; line-height:1.5; }
+
+/* Badge row — captured as one image */
+#sv-badges {
+  display:flex; gap:8px; align-items:stretch;
+  padding:16px; background:var(--white);
+  border-radius:20px; box-shadow:0 2px 16px var(--shadow-sm);
+}
+
+/* Mini hero badge */
+.mb-hero { flex:1; border-radius:14px; overflow:hidden; box-shadow:0 4px 16px rgba(27,42,74,.16); min-width:0; }
+.mb-hero-top { background:linear-gradient(145deg,var(--navy) 0%,var(--navy-mid) 100%); padding:16px 12px 12px; text-align:center; position:relative; overflow:hidden; }
+.mb-hero-top::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 20% 10%,rgba(201,149,42,.2) 0%,transparent 60%); pointer-events:none; }
+.mb-rule { width:24px; height:2px; background:var(--gold); margin:0 auto 8px; border-radius:2px; position:relative; z-index:1; }
+.mb-hero-lbl { font-size:7px; letter-spacing:.15em; text-transform:uppercase; color:var(--gold-dim); font-weight:600; margin-bottom:6px; position:relative; z-index:1; }
+.mb-hero-icon { font-size:28px; display:block; margin-bottom:6px; position:relative; z-index:1; filter:drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
+.mb-hero-title { font-family:'Cormorant Garamond',serif; font-size:12px; font-weight:700; color:white; line-height:1.2; margin-bottom:3px; position:relative; z-index:1; }
+.mb-hero-tagline { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:9px; color:rgba(255,255,255,.6); line-height:1.4; position:relative; z-index:1; }
+.mb-body { padding:10px 10px 12px; text-align:center; background:var(--white); }
+.mb-name   { font-family:'Cormorant Garamond',serif; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:3px; }
+.mb-role   { display:inline-flex; padding:2px 8px; border-radius:100px; background:var(--navy-light); font-size:8px; font-weight:600; color:var(--navy); letter-spacing:.04em; text-transform:uppercase; margin-bottom:3px; }
+.mb-tenure { font-size:8px; color:var(--mid); }
+
+/* Mini milestone badge */
+.mb-ms { flex:1; border-radius:14px; overflow:hidden; box-shadow:0 4px 16px var(--shadow-sm); min-width:0; }
+.mb-ms-top { padding:16px 12px 12px; text-align:center; position:relative; overflow:hidden; }
+.mb-ms-top::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 30% 0%,rgba(255,255,255,.18) 0%,transparent 55%); pointer-events:none; }
+.mb-ms-lbl    { font-size:7px; letter-spacing:.15em; text-transform:uppercase; color:rgba(255,255,255,.72); font-weight:600; margin-bottom:6px; position:relative; z-index:1; }
+.mb-ms-icon   { font-size:28px; display:block; margin-bottom:6px; position:relative; z-index:1; filter:drop-shadow(0 2px 6px rgba(0,0,0,.2)); }
+.mb-ms-title  { font-family:'Cormorant Garamond',serif; font-size:12px; font-weight:700; color:white; line-height:1.2; margin-bottom:3px; position:relative; z-index:1; }
+.mb-ms-tagline{ font-family:'Cormorant Garamond',serif; font-style:italic; font-size:9px; color:rgba(255,255,255,.62); line-height:1.4; position:relative; z-index:1; }
+.mb-ms-body   { padding:10px 10px 12px; text-align:center; background:var(--white); }
+.mb-ms-name   { font-family:'Cormorant Garamond',serif; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:3px; }
+.mb-ms-count  { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:700; color:var(--rose); line-height:1; }
+.mb-ms-lbl2   { font-size:8px; text-transform:uppercase; letter-spacing:.08em; color:var(--mid); margin-top:2px; }
+
+/* Badge theme colours */
+.t5   { background:linear-gradient(135deg,#2ea84a,#1e7a36); }
+.t10  { background:linear-gradient(135deg,#d4920e,#a86e08); }
+.t20  { background:linear-gradient(135deg,#7b5ea7,#5a3d88); }
+.t30  { background:linear-gradient(135deg,#2472a4,#185580); }
+.t40  { background:linear-gradient(135deg,#2d6a5a,#1a4a3a); }
+.t50  { background:linear-gradient(135deg,#b06428,#884a18); }
+.t75  { background:linear-gradient(135deg,#b83a2e,#8a2218 50%,#c9952a); }
+.t100 { background:linear-gradient(135deg,#181614,#2a2420 50%,#c9952a); }
+
+/* Save button */
+.btn-sv-save { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:15px; border-radius:14px; background:var(--navy); color:white; border:none; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; cursor:pointer; transition:all .2s; box-shadow:0 4px 16px rgba(27,42,74,.26); margin-top:16px; }
+.btn-sv-save:hover { opacity:.9; transform:translateY(-1px); }
+.btn-sv-note { text-align:center; font-size:12px; color:var(--mid); margin-top:8px; line-height:1.5; }
 </style>
 </head>
 <body>
-
 <div class="app">
 
   <div class="header">
@@ -411,55 +330,31 @@
 
   <div class="search-section">
     <div class="search-wrap">
-      <input type="text" id="name-input" placeholder="Type your name here to find your records" autocomplete="off">
+      <input type="text" id="name-input" placeholder="Type your full name here" autocomplete="off">
       <span class="search-icon">🔍</span>
       <div class="name-dropdown" id="name-dropdown"></div>
     </div>
-    <p class="search-disclaimer">📋Records shown are from 2023 onwards. We know many of you have been with us much longer — thank you! 💗</p>
-    <p class="search-disclaimer" style="font-size:11px; color:#bbb; margin-top:-16px;">🔒Your attendance data is stored securely for recognition purposes only. Contact Siew Mui to request corrections or removal.</p>
+    <p class="search-disclaimer">📋 Records shown are from 2023 onwards. We know many of you have been with us much longer — thank you! 💗</p>
+    <p class="search-disclaimer" style="font-size:10.5px;color:#c0b8b0;margin-top:-4px;">🔒 Your attendance data is stored securely for recognition purposes only. Contact Siew Mui to request corrections or removal.</p>
   </div>
 
   <div class="results" id="results"></div>
 
-  <!-- Badge Screen -->
-  <div class="badge-screen" id="badge-screen">
-    <div class="badge-back" onclick="hideBadge()">← Back to my records</div>
-    <div style="padding: 0 20px;">
-      <div class="badge-card" id="badge-card">
-        <div class="badge-top" id="badge-top">
-          <img src="data:image/png;base64,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" class="badge-logo" alt="Twinkle Hearts">
-          <span class="badge-icon" id="badge-icon">🌱</span>
-          <div class="badge-title" id="badge-badge-title">Growing Heart</div>
-          <div class="badge-tagline" id="badge-tagline">Every contribution plants a seed of joy!</div>
-        </div>
-        <div class="badge-body">
-          <div class="badge-volunteer-name" id="badge-name">—</div>
-          <div class="badge-volunteer-sub">Twinkle Hearts Volunteer · Records from 2023</div>
-          <div class="badge-stats">
-            <div class="badge-stat">
-              <div class="badge-stat-num" id="badge-events">0</div>
-              <div class="badge-stat-lbl">Events</div>
-            </div>
-            <div class="badge-stat">
-              <div class="badge-stat-num" id="badge-years">0</div>
-              <div class="badge-stat-lbl">Years</div>
-            </div>
-            <div class="badge-stat">
-              <div class="badge-stat-num">💗</div>
-              <div class="badge-stat-lbl">With Heart</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <button class="btn-save" id="btn-save" onclick="saveBadge()">📥 Save Badge Image</button>
-      <div class="btn-save-note">Save to your device and share anywhere 💗</div>
-    </div>
-  </div>
+</div>
 
+<!-- ── Save Screen ─────────────────────────────────────── -->
+<div class="save-screen" id="save-screen">
+  <div class="save-back" onclick="closeSaveScreen()">← Back to my records</div>
+  <div class="save-inner">
+    <div class="save-heading" id="sv-name"></div>
+    <div class="save-sub">Your identity and achievements — all in one.</div>
+    <div id="sv-badges"></div>
+    <button class="btn-sv-save" id="btn-sv-save" onclick="doSave()">📥 Save All My Badges</button>
+    <div class="btn-sv-note">Saved as one image — share anywhere 💗</div>
+  </div>
 </div>
 
 <script>
-
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpknimNFTbixX_0Q70z8YAZTG98B3LZGVWhIOEiraDPb0DNHkRc5o3Z98KI3hvpek_bg/exec';
 const API_TOKEN       = 'TH2026_secure';
 const SIGNUP_URL      = 'https://d3upt3he1kghkh.cloudfront.net/';
@@ -467,8 +362,9 @@ const CURRENT_YEAR    = new Date().getFullYear().toString();
 
 let allNames     = [];
 let selectedName = null;
+let currentName  = '';
+let currentTotal = 0;
 
-// Load names on page open
 loadNames();
 
 async function loadNames() {
@@ -476,12 +372,9 @@ async function loadNames() {
     const res  = await fetch(`${APPS_SCRIPT_URL}?action=getNames&token=${API_TOKEN}`);
     const data = await res.json();
     if (data.names) allNames = data.names;
-  } catch(e) {
-    console.warn('Could not load names', e);
-  }
+  } catch(e) { console.warn('Could not load names', e); }
 }
 
-// Search input
 const nameInput    = document.getElementById('name-input');
 const nameDropdown = document.getElementById('name-dropdown');
 
@@ -492,7 +385,7 @@ nameInput.addEventListener('input', () => {
   const matches = allNames.filter(n => n.toLowerCase().includes(q)).slice(0, 8);
   if (!matches.length) { nameDropdown.classList.remove('show'); return; }
   nameDropdown.innerHTML = matches.map(n =>
-    `<div class="name-option" onclick="pickName('${n.replace(/'/g, "\\'")}')">${n}</div>`
+    `<div class="name-option" onclick="pickName('${n.replace(/'/g, "\'")}')"">${n}</div>`
   ).join('');
   nameDropdown.classList.add('show');
 });
@@ -509,222 +402,280 @@ async function pickName(name) {
   await loadRecords(name);
 }
 
-// Log search (silently, non-blocking)
 async function logSearch(name) {
-  try {
-    await fetch(`${APPS_SCRIPT_URL}?action=logSearch&name=${encodeURIComponent(name)}&token=${API_TOKEN}`);
-  } catch(e) {
-    // Silently fail — logging should never break the app
-  }
+  try { await fetch(`${APPS_SCRIPT_URL}?action=logSearch&name=${encodeURIComponent(name)}&token=${API_TOKEN}`); } catch(e) {}
 }
 
-// Fetch records
 async function loadRecords(name) {
   const el = document.getElementById('results');
   el.innerHTML = `<div class="state-msg"><span class="spinner"></span>Loading…</div>`;
   try {
-    const res     = await fetch(`${APPS_SCRIPT_URL}?action=getRecords&name=${encodeURIComponent(name)}&token=${API_TOKEN}`);
-    const data    = await res.json();
+    const res  = await fetch(`${APPS_SCRIPT_URL}?action=getRecords&name=${encodeURIComponent(name)}&token=${API_TOKEN}`);
+    const data = await res.json();
     renderRecords(name, data.records || []);
   } catch(e) {
     el.innerHTML = `<div class="state-msg"><div class="icon">⚠️</div><p>Could not load records.<br>Please try again.</p></div>`;
   }
 }
 
-// Render
-function renderRecords(name, records) {
-  const el     = document.getElementById('results');
-  const total  = records.length;
-  const thisYr = records.filter(r => String(r.Year) === CURRENT_YEAR).length;
-  const years  = [...new Set(records.map(r => r.Year).filter(Boolean))];
+/* ── Hero data ────────────────────────────────────────────── */
+const HERO_DATA = {
+  'Joe Tan': [
+    { icon:'🚛', title:'Logistics Guardian',        tagline:'Keeping everything running smoothly behind the scenes',       role:'Logistics Director',          tenure:'Since 2018' },
+    { icon:'🚐', title:'Project Joy Delivery Hero', tagline:'Bringing warmth and food to AMK and CSU with a smile',       role:'Project Joy — Food Delivery', tenure:'Since 2023' },
+  ],
+  'Chin Mee Shyan': [
+    { icon:'💰', title:'Finance Steward',            tagline:'Safeguarding our resources with care and integrity',          role:'Finance Officer',             tenure:'Since 2012' },
+    { icon:'🗺️', title:'Master Planner',             tagline:'Turning ideas into moments that matter',                     role:'Master Planner',              tenure:'Since 2011' },
+  ],
+  'Pan Wen':           [{ icon:'🗺️', title:'Master Planner', tagline:'Turning ideas into moments that matter', role:'Master Planner', tenure:'Since 2021' }],
+  'Ritesh Maheshwari': [{ icon:'🗺️', title:'Master Planner', tagline:'Turning ideas into moments that matter', role:'Master Planner', tenure:'Since 2023' }],
+  'Royce Wong': [
+    { icon:'🗺️', title:'Master Planner',             tagline:'Turning ideas into moments that matter',                     role:'Master Planner',              tenure:'Since 2021' },
+    { icon:'🍱', title:'Project Joy Coordinator',    tagline:'Nourishing our elderly friends with love and dedication',    role:'Project Joy — Food Ordering', tenure:'Since 2023' },
+  ],
+  'Linn':        [{ icon:'🗺️', title:'Master Planner', tagline:'Turning ideas into moments that matter', role:'Master Planner', tenure:'Since 2023' }],
+  'Bernice Bay': [{ icon:'🗺️', title:'Master Planner', tagline:'Turning ideas into moments that matter', role:'Master Planner', tenure:'Since 2023' }],
+  'Sze Min':     [{ icon:'🗺️', title:'Master Planner', tagline:'Turning ideas into moments that matter', role:'Master Planner', tenure:'Since 2011' }],
+  'Shirley Chua': [
+    { icon:'🛒', title:'Procurement Champion',       tagline:'Sourcing with heart so every key event shines',              role:'Purchasing Director',         tenure:'Since 2015' },
+    { icon:'🍱', title:'Project Joy Coordinator',    tagline:'Nourishing our elderly friends with love and dedication',    role:'Project Joy — Food Ordering', tenure:'Since 2023' },
+  ],
+  'Yvonne Ng': [{ icon:'🍱', title:'Project Joy Coordinator', tagline:'Nourishing our elderly friends with love and dedication', role:'Project Joy — Food Ordering', tenure:'Since 2025' }],
+  'Deborah': [
+    { icon:'🛒', title:'Procurement Champion',       tagline:'Sourcing with heart so every key event shines',              role:'Purchasing Director',         tenure:'Since 2024' },
+    { icon:'🍱', title:'Project Joy Coordinator',    tagline:'Nourishing our elderly friends with love and dedication',    role:'Project Joy — Food Ordering', tenure:'Since 2024' },
+    { icon:'📊', title:'Project Joy Treasurer',      tagline:"Keeping Project Joy's finances accountable and transparent", role:'Project Joy — Finance',       tenure:'Since 2024' },
+  ],
+};
 
-  if (!total) {
-    el.innerHTML = `<div class="state-msg"><div class="icon">💗</div><p>No records found for <strong>${name}</strong>.<br>We look forward to seeing you at our next event!</p></div>`;
-    return;
-  }
-
-  // Milestone
-  const MILESTONES = [5, 10, 20, 30, 40, 50, 75, 100];
-  const nextMilestone = MILESTONES.find(m => m > total);
-  const nudge = nextMilestone
-    ? `<div class="nudge">🎯 You are <strong>${nextMilestone - total} event${nextMilestone - total !== 1 ? 's' : ''}</strong> away from your next milestone of <strong>${nextMilestone} events</strong>!</div>`
-    : '';
-
-  const MILESTONE_DATA = getMilestoneData(total);
-  const milestone = MILESTONE_DATA
-    ? `<div class="milestone" onclick="showBadge('${name.replace(/'/g, "\'")}', ${total}, ${years.length})">
-        <span>${MILESTONE_DATA.icon} <strong>${MILESTONE_DATA.title}</strong> — ${total} events</span>
-        <span class="milestone-save">Save badge →</span>
-       </div>`
-    : '';
-
-  // ── Streak & miss you ──────────────────────────────────────
-  const lastDate  = records[0]?.Date || '';
-  const ago       = monthsAgoFromDate(lastDate);
-  const missYou   = ago >= 3;
-  const { streak, months } = calcStreak(records);
-  const firstName = name.split(' ')[0];
-
-  let streakHTML = '';
-  if (!missYou && streak >= 2) {
-    const monthDots = months.map(m => `<span class="streak-month active">${shortMonth(m)}</span>`).join('');
-    const msg = streak >= 12
-      ? `You've shown up every single month for a year — extraordinary! 🎉`
-      : streak >= 6
-      ? `You've been showing up consistently for ${streak} months!`
-      : `You've attended at least once every month — keep it going!`;
-    streakHTML = `
-      <div class="streak">
-        <div class="streak-icon">🔥</div>
-        <div>
-          <div class="streak-title">${streak}-month streak!</div>
-          <div class="streak-sub">${msg}</div>
-          <div class="streak-months">${monthDots}</div>
-        </div>
-      </div>`;
-  }
-
-  let missYouHTML = '';
-  if (missYou) {
-    missYouHTML = `
-      <div class="miss-you">
-        <div class="miss-you-icon">💜</div>
-        <div>
-          <div class="miss-you-title">We miss you, ${firstName}!</div>
-          <div class="miss-you-sub">It's been a while since we last saw you — your last event was ${fmtDate(lastDate)}. Your ${total} contributions are still here, and we'd love to see you again whenever you're ready. 💗</div>
-          <button class="miss-you-btn" onclick="window.open('${SIGNUP_URL}', '_blank')">🗓️ See upcoming events</button>
-        </div>
-      </div>`;
-  }
-
-  const upcomingHTML = `<a href="${SIGNUP_URL}" target="_blank" class="upcoming-btn">🗓️ View Upcoming Events</a>`;
-
-  const byYear = {};
-  records.forEach(r => {
-    const yr = String(r.Year || 'Unknown');
-    if (!byYear[yr]) byYear[yr] = [];
-    byYear[yr].push(r);
-  });
-
-  const yearHTML = Object.entries(byYear)
-    .sort((a, b) => b[0].localeCompare(a[0]))
-    .map(([yr, evts]) => `
-      <div class="year-group">
-        <div class="year-divider"><span>${yr}</span></div>
-        ${evts.map((r, i) => `
-          <div class="event-card" style="animation-delay:${Math.min(i * 0.04, 0.5)}s">
-            <div>
-              <div class="event-name">${r.Event || '—'}</div>
-              <div class="event-meta">
-                <span>📅 ${fmtDate(r.Date)}</span>
-                ${r.Beneficiary ? `<span>📍 ${r.Beneficiary}</span>` : ''}
-              </div>
-            </div>
-            <div class="attended-badge">✓ Attended</div>
-          </div>`
-        ).join('')}
-      </div>`
-    ).join('');
-
-  el.innerHTML = `
-    ${milestone}
-    ${streakHTML}
-    ${missYouHTML}
-    ${nudge}
-    <div class="results-header">
-      <div class="results-title">Records for <em>${name}</em></div>
-      <div class="results-count">${total} entries</div>
-    </div>
-    <div class="pills">
-      <div class="pill"><div class="pill-dot pink"></div>${total} attended</div>
-      <div class="pill"><div class="pill-dot teal"></div>${years.length} year${years.length !== 1 ? 's' : ''}</div>
-      <div class="pill"><div class="pill-dot pink"></div>${thisYr} in ${CURRENT_YEAR}</div>
-    </div>
-    ${upcomingHTML}
-    ${yearHTML}
-  `;
+/* ── Milestone data ──────────────────────────────────────── */
+function getMilestoneData(total) {
+  if (total >= 100) return { icon:'👑', title:'Twinkle Hearts Legend', tagline:'100 events of pure heart — you are truly legendary!', theme:'t100' };
+  if (total >= 75)  return { icon:'💗', title:'Inspiring Heart',        tagline:'Your love and care touches so many lives!',            theme:'t75'  };
+  if (total >= 50)  return { icon:'🏆', title:'Champion Volunteer',     tagline:"50 moments of joy — you're a legend in the making!",  theme:'t50'  };
+  if (total >= 40)  return { icon:'🎖️', title:'Rising Champion',        tagline:"40 contributions — you're a force of good!",          theme:'t40'  };
+  if (total >= 30)  return { icon:'💪', title:'Committed Heart',        tagline:'Your dedication inspires us all!',                     theme:'t30'  };
+  if (total >= 20)  return { icon:'⭐', title:'Star Volunteer',         tagline:'20 contributions and still shining bright!',           theme:'t20'  };
+  if (total >= 10)  return { icon:'💛', title:'Dedicated Heart',        tagline:'Your commitment is making a difference!',              theme:'t10'  };
+  if (total >= 5)   return { icon:'🌱', title:'Growing Heart',          tagline:'Every contribution plants a seed of joy!',             theme:'t5'   };
+  return null;
 }
 
-// ── Helper functions ──────────────────────────────────────────
+/* ── Helper functions ────────────────────────────────────── */
 function calcStreak(records) {
-  if (!records.length) return { streak: 0, months: [] };
-  const monthSet = new Set(records.map(r => r.Date ? r.Date.substring(0, 7) : null).filter(Boolean));
+  if (!records.length) return { streak:0, months:[] };
+  const monthSet = new Set(records.map(r => r.Date ? r.Date.substring(0,7) : null).filter(Boolean));
   const sorted   = [...monthSet].sort().reverse();
-  if (!sorted.length) return { streak: 0, months: [] };
-  let streak = 1;
-  let months = [sorted[0]];
+  if (!sorted.length) return { streak:0, months:[] };
+  let streak = 1, months = [sorted[0]];
   for (let i = 1; i < sorted.length; i++) {
-    const [y1, m1] = sorted[i-1].split('-').map(Number);
-    const [y2, m2] = sorted[i].split('-').map(Number);
-    if ((y1 - y2) * 12 + (m1 - m2) === 1) { streak++; months.push(sorted[i]); }
+    const [y1,m1] = sorted[i-1].split('-').map(Number);
+    const [y2,m2] = sorted[i].split('-').map(Number);
+    if ((y1-y2)*12+(m1-m2) === 1) { streak++; months.push(sorted[i]); }
     else break;
   }
   return { streak, months };
 }
-
-function monthsAgoFromDate(dateStr) {
-  if (!dateStr) return 99;
-  const last = new Date(dateStr);
-  const now  = new Date();
-  return (now.getFullYear() - last.getFullYear()) * 12 + (now.getMonth() - last.getMonth());
+function monthsAgoFromDate(d) {
+  if (!d) return 99;
+  const last = new Date(d), now = new Date();
+  return (now.getFullYear()-last.getFullYear())*12+(now.getMonth()-last.getMonth());
 }
-
 function shortMonth(ym) {
-  const [y, m] = ym.split('-');
-  return new Date(y, m-1).toLocaleString('en-SG', { month: 'short' });
+  const [y,m] = ym.split('-');
+  return new Date(y,m-1).toLocaleString('en-SG',{month:'short'});
+}
+function fmtDate(d) {
+  if (!d) return '';
+  return new Date(d).toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'});
 }
 
-// ── Milestone data ───────────────────────────────────────────
-function getMilestoneData(total) {
-  if (total >= 100) return { icon: '👑', title: 'Twinkle Hearts Legend', tagline: '100 events of pure heart — you are truly legendary!', theme: 'theme-100' };
-  if (total >= 75)  return { icon: '💗', title: 'Inspiring Heart',        tagline: 'Your love touches so many lives - you are inspirational!',          theme: 'theme-75'  };
-  if (total >= 50)  return { icon: '🏆', title: 'Champion Volunteer',     tagline: "50 moments of joy — you're a legend in the making!", theme: 'theme-50'  };
-  if (total >= 40)  return { icon: '🎖️', title: 'Rising Champion',       tagline: "40 priceless contributions — you're a force of good!",         theme: 'theme-40'  };
-  if (total >= 30)  return { icon: '💪', title: 'Committed Heart',        tagline: 'Your dedication inspires us all!',                   theme: 'theme-30'  };
-  if (total >= 20)  return { icon: '⭐', title: 'Star Volunteer',         tagline: '20 contributions and still shining bright!',         theme: 'theme-20'  };
-  if (total >= 10)  return { icon: '💛', title: 'Dedicated Heart',        tagline: 'Your commitment is making a difference!',            theme: 'theme-10'  };
-  if (total >= 5)   return { icon: '🌱', title: 'Growing Heart',          tagline: 'Every contribution plants a seed of joy!',           theme: 'theme-5'   };
-  return null;
+/* ── Render ──────────────────────────────────────────────── */
+function renderRecords(name, records) {
+  const el      = document.getElementById('results');
+  const total   = records.length;
+  currentName   = name;
+  currentTotal  = total;
+  const heroes  = HERO_DATA[name] || [];
+  const thisYr  = records.filter(r => String(r.Year) === CURRENT_YEAR).length;
+  const years   = [...new Set(records.map(r => r.Year).filter(Boolean))];
+  const firstName = name.split(' ')[0];
+
+  if (!total && !heroes.length) {
+    el.innerHTML = `<div class="state-msg"><div class="icon">💗</div><p>No records found for <strong>${name}</strong>.<br>We look forward to seeing you at our next event!</p></div>`;
+    return;
+  }
+
+  /* ── Milestone & nudge ── */
+  const ms     = getMilestoneData(total);
+  const nextMs = [5,10,20,30,40,50,75,100].find(m => m > total);
+
+  const milestoneHTML = ms
+    ? `<div class="milestone-pill">${ms.icon} <strong>${ms.title}</strong> — ${total} events</div>` : '';
+  const nudgeHTML = nextMs
+    ? `<div class="nudge">🎯 You are <strong>${nextMs-total} event${nextMs-total!==1?'s':''}</strong> away from your next milestone of <strong>${nextMs} events</strong>!</div>` : '';
+
+  /* ── Streak / miss you ── */
+  const lastDate = records[0]?.Date || '';
+  const ago      = monthsAgoFromDate(lastDate);
+  const missYou  = ago >= 3 && total > 0;
+  const {streak, months} = calcStreak(records);
+
+  let streakHTML = '';
+  if (!missYou && streak >= 2) {
+    const dots = months.map(m=>`<span class="streak-month active">${shortMonth(m)}</span>`).join('');
+    const msg  = streak>=12 ? `You've shown up every single month for a year — extraordinary! 🎉`
+               : streak>=6  ? `You've been showing up consistently for ${streak} months!`
+               :               `You've attended at least once every month — keep it going!`;
+    streakHTML = `<div class="streak"><div class="streak-icon">🔥</div><div class="streak-content"><div class="streak-title">${streak}-month streak!</div><div class="streak-sub">${msg}</div><div class="streak-months">${dots}</div></div></div>`;
+  }
+
+  let missYouHTML = '';
+  if (missYou) {
+    missYouHTML = `<div class="miss-you"><div class="miss-you-icon">💜</div><div><div class="miss-you-title">We miss you, ${firstName}!</div><div class="miss-you-sub">It's been a while — your last event was ${fmtDate(lastDate)}. Your ${total} contributions are still here, and we'd love to see you again whenever you're ready. 💗</div><button class="miss-you-btn" onclick="window.open('${SIGNUP_URL}','_blank')">🗓️ See upcoming events</button></div></div>`;
+  }
+
+  /* ── Hero cards ── */
+  let heroCardsHTML = '';
+  if (heroes.length) {
+    const gridClass = heroes.length === 1 ? 'hero-grid-1' : 'hero-grid-2';
+    const cards = heroes.map((h,i) => `
+      <div class="hero-card" style="animation-delay:${i*0.06}s" onclick="openSaveScreen()">
+        <div class="hero-card-top">
+          <div class="hero-icon">${h.icon}</div>
+          <div class="hero-card-meta">
+            <div class="hero-card-label">✦ Backstage Hero</div>
+            <div class="hero-card-title">${h.title}</div>
+          </div>
+        </div>
+        <div class="hero-card-tagline">${h.tagline}</div>
+        <div class="hero-card-footer">
+          <div class="hero-card-tenure">${h.role} · ${h.tenure}</div>
+          <div class="hero-card-save">Save badges →</div>
+        </div>
+      </div>`).join('');
+    heroCardsHTML = `<div class="${gridClass}">${cards}</div>`;
+  }
+
+  /* ── Save button ── */
+  const saveBtn = (heroes.length || ms)
+    ? `<button class="btn-save-all" onclick="openSaveScreen()">📥 Save All My Badges</button>` : '';
+
+  /* ── Hero role pills ── */
+  const heroPillsHTML = heroes.length
+    ? `<div class="hero-pills">${heroes.map(h=>`<div class="hero-pill"><div class="hero-pill-dot"></div>${h.icon} ${h.title} <span class="hero-pill-sep">·</span> ${h.tenure}</div>`).join('')}</div>` : '';
+
+  /* ── Standard pills ── */
+  const stdPillsHTML = `<div class="pills">
+    <div class="pill"><div class="pill-dot rose"></div>${total} attended</div>
+    <div class="pill"><div class="pill-dot teal"></div>${years.length} year${years.length!==1?'s':''}</div>
+    <div class="pill"><div class="pill-dot rose"></div>${thisYr} in ${CURRENT_YEAR}</div>
+  </div>`;
+
+  /* ── Event records ── */
+  const byYear = {};
+  records.forEach(r => { const yr=String(r.Year||'Unknown'); if(!byYear[yr])byYear[yr]=[]; byYear[yr].push(r); });
+  const yearHTML = Object.entries(byYear).sort((a,b)=>b[0].localeCompare(a[0])).map(([yr,evts])=>`
+    <div class="year-group">
+      <div class="year-divider"><span>${yr}</span></div>
+      ${evts.map((r,i)=>`
+        <div class="event-card" style="animation-delay:${Math.min(i*0.04,0.5)}s">
+          <div>
+            <div class="event-name">${r.Event||'—'}</div>
+            <div class="event-meta">
+              <span>📅 ${fmtDate(r.Date)}</span>
+              ${r.Beneficiary?`<span>📍 ${r.Beneficiary}</span>`:''}
+            </div>
+          </div>
+          <div class="attended-badge">✓ Attended</div>
+        </div>`).join('')}
+    </div>`).join('');
+
+  /* ── Assemble ── */
+  el.innerHTML = `
+    <div class="board-section">
+      <div class="board-title">${firstName}'s Board</div>
+      ${milestoneHTML}
+      ${nudgeHTML}
+      ${streakHTML}
+      ${missYouHTML}
+      ${heroCardsHTML}
+      ${saveBtn}
+    </div>
+    <div class="board-divider"></div>
+    <div class="records-section">
+      <div class="results-header">
+        <div class="results-title">Records for <em>${name}</em></div>
+        <div class="results-count">${total} entries</div>
+      </div>
+      ${heroPillsHTML}
+      ${stdPillsHTML}
+      ${yearHTML}
+      <a href="${SIGNUP_URL}" target="_blank" class="upcoming-btn">🗓️ View Upcoming Events</a>
+    </div>`;
 }
 
-// ── Badge screen ──────────────────────────────────────────────
-function showBadge(name, total, years) {
-  const m = getMilestoneData(total) || { icon: '💗', title: 'Volunteer', tagline: 'Thank you for being here!', theme: 'theme-5' };
-  document.getElementById('badge-top').className        = `badge-top ${m.theme}`;
-  document.getElementById('badge-icon').textContent     = m.icon;
-  document.getElementById('badge-badge-title').textContent = m.title;
-  document.getElementById('badge-tagline').textContent  = m.tagline;
-  document.getElementById('badge-name').textContent     = name;
-  document.getElementById('badge-events').textContent   = total;
-  document.getElementById('badge-years').textContent    = years;
-  // Reset save button
-  const btn = document.getElementById('btn-save');
-  btn.innerHTML = '📥 Save Badge Image';
+/* ── Save screen ─────────────────────────────────────────── */
+const THEME_COLS = { t5:'#2ea84a', t10:'#d4920e', t20:'#7b5ea7', t30:'#2472a4', t40:'#2d6a5a', t50:'#b06428', t75:'#b83a2e', t100:'#181614' };
+
+function openSaveScreen() {
+  const heroes = HERO_DATA[currentName] || [];
+  const ms     = getMilestoneData(currentTotal);
+  document.getElementById('sv-name').textContent = currentName + ''s Badges';
+  let html = '';
+  heroes.forEach(h => {
+    html += `<div class="mb-hero">
+      <div class="mb-hero-top">
+        <div class="mb-rule"></div>
+        <div class="mb-hero-lbl">✦ Backstage Hero</div>
+        <span class="mb-hero-icon">${h.icon}</span>
+        <div class="mb-hero-title">${h.title}</div>
+        <div class="mb-hero-tagline">${h.tagline}</div>
+      </div>
+      <div class="mb-body">
+        <div class="mb-name">${currentName}</div>
+        <div class="mb-role">${h.role}</div>
+        <div class="mb-tenure">${h.tenure}</div>
+      </div>
+    </div>`;
+  });
+  if (ms) {
+    const col = THEME_COLS[ms.theme] || '#2472a4';
+    html += `<div class="mb-ms">
+      <div class="mb-ms-top" style="background:linear-gradient(145deg,${col} 0%,${col}bb 100%)">
+        <div class="mb-ms-lbl">Volunteering</div>
+        <span class="mb-ms-icon">${ms.icon}</span>
+        <div class="mb-ms-title">${ms.title}</div>
+        <div class="mb-ms-tagline">${ms.tagline}</div>
+      </div>
+      <div class="mb-ms-body">
+        <div class="mb-ms-name">${currentName}</div>
+        <div class="mb-ms-count">${currentTotal}</div>
+        <div class="mb-ms-lbl2">Events Attended</div>
+      </div>
+    </div>`;
+  }
+  document.getElementById('sv-badges').innerHTML = html;
+  const btn = document.getElementById('btn-sv-save');
+  btn.innerHTML = '📥 Save All My Badges';
   btn.disabled  = false;
-  // Show screen
-  const screen = document.getElementById('badge-screen');
-  screen.classList.add('show');
-  screen.scrollTop = 0;
-  // Re-trigger icon animation
-  const icon = document.getElementById('badge-icon');
-  icon.style.animation = 'none';
-  setTimeout(() => icon.style.animation = 'iconPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both', 10);
+  document.getElementById('save-screen').classList.add('show');
 }
 
-function hideBadge() {
-  document.getElementById('badge-screen').classList.remove('show');
+function closeSaveScreen() {
+  document.getElementById('save-screen').classList.remove('show');
 }
 
-async function saveBadge() {
-  const btn = document.getElementById('btn-save');
+async function doSave() {
+  const btn = document.getElementById('btn-sv-save');
   btn.innerHTML = '<span class="spinner"></span> Generating…';
   btn.disabled  = true;
   try {
-    const card   = document.getElementById('badge-card');
-    const canvas = await html2canvas(card, { scale: 3, useCORS: true, backgroundColor: null, logging: false });
+    const el     = document.getElementById('sv-badges');
+    const canvas = await html2canvas(el, { scale:3, useCORS:true, backgroundColor:'#ffffff', logging:false });
     const link   = document.createElement('a');
-    const name   = document.getElementById('badge-name').textContent.replace(/\s+/g, '_');
-    link.download = `TwinkleHearts_Badge_${name}.png`;
+    link.download = `TwinkleHearts_${currentName.replace(/\s+/g,'_')}_Badges.png`;
     link.href     = canvas.toDataURL('image/png');
     link.click();
     btn.innerHTML = '✅ Saved!';
@@ -734,12 +685,6 @@ async function saveBadge() {
     btn.disabled  = false;
   }
 }
-
-function fmtDate(d) {
-  if (!d) return '';
-  return new Date(d).toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' });
-}
-
 </script>
 </body>
 </html>
