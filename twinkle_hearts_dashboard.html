@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Twinkle Hearts — Master Planner Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f2ea; --white:#fff;
+  --rose:#b83a2e; --rose-light:#fdf0ee;
+  --teal:#2d6a5a; --teal-light:#eaf5f1; --teal-border:#a8d8cc;
+  --amber:#b8820a; --amber-light:#fef8ec; --amber-border:#e8c870;
+  --navy:#1b2a4a; --navy-mid:#243660; --navy-light:#eef2f8; --navy-border:#c8d4e8;
+  --gold:#c9952a; --lavender:#7b5ea7; --lavender-light:#f5f0fc;
+  --ink:#1c1a18; --ink-mid:#5a5550; --mid:#9a9490; --border:#e8e0d2;
+  --shadow:rgba(28,26,24,0.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── LAYOUT ────────────────────────────────────────────────── */
+.app{max-width:960px;margin:0 auto;padding:28px 20px 80px;}
+
+/* ── HEADER ────────────────────────────────────────────────── */
+.header{margin-bottom:24px;}
+.header-logo{font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink);}
+.header-logo span{color:var(--rose);}
+.header-sub{font-size:12px;color:var(--mid);margin-top:3px;}
+
+/* ── TABS ──────────────────────────────────────────────────── */
+.tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--white);padding:6px;border-radius:14px;box-shadow:0 1px 6px var(--shadow);overflow-x:auto;}
+.tab{flex:1;padding:10px 14px;border-radius:10px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--mid);cursor:pointer;transition:all .15s;white-space:nowrap;text-align:center;}
+.tab:hover{color:var(--ink);}
+.tab.active{background:var(--navy);color:white;font-weight:600;}
+
+/* ── PAGES ─────────────────────────────────────────────────── */
+.page{display:none;animation:fadeUp .3s ease both;}
+.page.active{display:block;}
+
+/* ── STATE ─────────────────────────────────────────────────── */
+.loading{text-align:center;padding:60px 20px;color:var(--mid);}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid rgba(0,0,0,.1);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px;}
+.empty{text-align:center;padding:40px 20px;color:var(--mid);font-size:14px;}
+
+/* ── SUMMARY STRIP ─────────────────────────────────────────── */
+.sum-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.sum-card{background:var(--white);border-radius:14px;padding:18px;box-shadow:0 1px 6px var(--shadow);}
+.sum-ic{font-size:20px;margin-bottom:6px;}
+.sum-num{font-family:'DM Serif Display',serif;font-size:30px;color:var(--navy);line-height:1;margin-bottom:2px;}
+.sum-lbl{font-size:11px;color:var(--mid);font-weight:500;letter-spacing:.02em;text-transform:uppercase;}
+
+/* ── SECTION ───────────────────────────────────────────────── */
+.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.section-title{font-size:15px;font-weight:600;color:var(--ink);}
+.section-sub{font-size:12px;color:var(--mid);margin-top:2px;}
+
+/* ── INSIGHT PANELS ────────────────────────────────────────── */
+.insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+.insight-panel{background:var(--white);border-radius:16px;overflow:hidden;box-shadow:0 1px 6px var(--shadow);}
+.ip-head{padding:14px 16px;border-bottom:1px solid var(--border);}
+.ip-head.gold{background:linear-gradient(135deg,#fff8e6,#fffdf5);}
+.ip-head.purple{background:linear-gradient(135deg,var(--lavender-light),#faf8ff);}
+.ip-head.teal{background:linear-gradient(135deg,var(--teal-light),#f0faf7);}
+.ip-title{font-size:13px;font-weight:700;}
+.ip-title.gold{color:var(--amber);}
+.ip-title.purple{color:var(--lavender);}
+.ip-title.teal{color:var(--teal);}
+.ip-count{font-family:'DM Serif Display',serif;font-size:24px;line-height:1;margin-bottom:1px;}
+.ip-count.gold{color:var(--amber);}
+.ip-count.purple{color:var(--lavender);}
+.ip-count.teal{color:var(--teal);}
+.ip-desc{font-size:11px;color:var(--mid);}
+.ip-list{max-height:320px;overflow-y:auto;}
+.ip-row{padding:11px 16px;border-bottom:1px solid var(--border);}
+.ip-row:last-child{border-bottom:none;}
+.ip-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.ip-meta{font-size:11px;color:var(--mid);margin-bottom:4px;}
+.ip-rec{font-size:11px;color:var(--ink-mid);font-style:italic;line-height:1.4;padding:6px 10px;background:var(--bg);border-radius:8px;}
+.ip-empty{padding:20px 16px;font-size:13px;color:var(--mid);text-align:center;}
+.badge-pill{display:inline-block;padding:2px 9px;border-radius:100px;font-size:10px;font-weight:700;}
+.badge-gold{background:var(--amber-light);color:var(--amber);}
+.badge-purple{background:var(--lavender-light);color:var(--lavender);}
+.badge-red{background:var(--rose-light);color:var(--rose);}
+.badge-teal{background:var(--teal-light);color:var(--teal);}
+
+/* ── LEADERBOARD ───────────────────────────────────────────── */
+.year-pills{display:flex;gap:6px;flex-wrap:wrap;}
+.ypill{padding:5px 14px;border-radius:100px;border:1.5px solid var(--border);background:var(--white);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;color:var(--mid);transition:all .15s;}
+.ypill.active,.ypill:hover{background:var(--navy);border-color:var(--navy);color:white;}
+
+.lb-table{width:100%;border-collapse:collapse;background:var(--white);border-radius:14px;overflow:hidden;box-shadow:0 1px 6px var(--shadow);}
+.lb-table th{background:var(--navy);color:white;padding:12px 16px;font-size:12px;font-weight:600;letter-spacing:.04em;text-align:left;}
+.lb-table td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+.lb-table tr:last-child td{border-bottom:none;}
+.lb-table tr:hover td{background:#faf8f5;}
+.rank-1{font-weight:800;color:#b8860b;font-size:15px;}
+.rank-2{font-weight:700;color:#888;font-size:14px;}
+.rank-3{font-weight:700;color:#a0522d;font-size:14px;}
+.rank-n{font-weight:500;color:var(--mid);font-size:12px;}
+.lb-name{font-weight:600;color:var(--ink);}
+.lb-bar-wrap{width:120px;height:6px;background:var(--border);border-radius:100px;overflow:hidden;}
+.lb-bar{height:100%;background:var(--navy);border-radius:100px;transition:width .4s;}
+.medal{font-size:16px;}
+
+/* ── EVENTS ────────────────────────────────────────────────── */
+.event-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.ev-card{background:var(--white);border-radius:14px;padding:16px;box-shadow:0 1px 6px var(--shadow);cursor:pointer;transition:box-shadow .15s;border:1.5px solid transparent;}
+.ev-card:hover{box-shadow:0 4px 16px var(--shadow);border-color:var(--navy-border);}
+.ev-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:6px;line-height:1.3;}
+.ev-meta{font-size:12px;color:var(--mid);margin-bottom:10px;}
+.ev-count{display:flex;align-items:center;gap:8px;}
+.ev-num{font-family:'DM Serif Display',serif;font-size:28px;color:var(--navy);line-height:1;}
+.ev-lbl{font-size:11px;color:var(--mid);font-weight:500;}
+.ev-attendees{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;color:var(--ink-mid);line-height:1.6;display:none;}
+.ev-card.expanded .ev-attendees{display:block;}
+.ev-card.expanded{border-color:var(--navy);}
+
+/* ── SEARCH ────────────────────────────────────────────────── */
+.search-wrap{position:relative;margin-bottom:10px;}
+.search-input{width:100%;padding:14px 48px 14px 18px;border:1.5px solid var(--border);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--ink);background:var(--white);outline:none;transition:border-color .2s, box-shadow .2s;box-shadow:0 2px 8px var(--shadow);}
+.search-input:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(27,42,74,.08);}
+.search-input::placeholder{color:#c8c0b8;}
+.search-ic{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
+.name-dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--white);border:1.5px solid var(--border);border-radius:14px;box-shadow:0 12px 32px var(--shadow);max-height:240px;overflow-y:auto;z-index:100;display:none;}
+.name-dropdown.show{display:block;}
+.name-option{padding:12px 18px;font-size:14px;cursor:pointer;border-bottom:1px solid var(--border);}
+.name-option:last-child{border-bottom:none;}
+.name-option:hover{background:var(--navy-light);color:var(--navy);}
+
+.vol-card{background:var(--white);border-radius:16px;padding:20px;box-shadow:0 1px 6px var(--shadow);margin-bottom:12px;}
+.vol-name{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:4px;}
+.vol-name em{color:var(--rose);font-style:normal;}
+.vol-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.vpill{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:100px;font-size:12px;font-weight:500;border:1.5px solid var(--border);background:var(--bg);}
+.vpill-dot{width:7px;height:7px;border-radius:50%;}
+.dot-rose{background:var(--rose);}
+.dot-teal{background:var(--teal);}
+.dot-amber{background:var(--amber);}
+.yr-divider{display:flex;align-items:center;gap:10px;margin:16px 0 10px;}
+.yr-divider::before,.yr-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.yr-divider span{font-size:11px;color:var(--mid);font-weight:600;letter-spacing:.1em;text-transform:uppercase;}
+.rec-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+.rec-row:last-child{border-bottom:none;}
+.rec-name{font-size:13px;font-weight:500;color:var(--ink);}
+.rec-date{font-size:12px;color:var(--mid);}
+.attended{flex-shrink:0;padding:4px 10px;border-radius:100px;background:var(--teal-light);color:var(--teal);font-size:11px;font-weight:600;}
+
+/* ── REFRESH BTN ───────────────────────────────────────────── */
+.rf-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:100px;background:var(--white);border:1.5px solid var(--border);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;color:var(--ink-mid);transition:all .2s;}
+.rf-btn:hover{border-color:var(--navy);color:var(--navy);}
+.rf-btn.spin .rfi{animation:spin .7s linear infinite;display:inline-block;}
+
+/* ── MOBILE ────────────────────────────────────────────────── */
+@media(max-width:640px){
+  .sum-grid{grid-template-columns:repeat(2,1fr);}
+  .insight-grid{grid-template-columns:1fr;}
+  .event-grid{grid-template-columns:1fr;}
+  .tab{font-size:11px;padding:8px 8px;}
+  .lb-bar-wrap{display:none;}
+  .main{padding:16px 14px 80px;}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <div class="header-logo">Twinkle <span>Hearts</span> 💗</div>
+    <div class="header-sub">Master Planner Dashboard · Live data from Google Sheets</div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('insights')">💡 People Insights</button>
+    <button class="tab" onclick="showTab('leaderboard')">🏆 Leaderboard</button>
+    <button class="tab" onclick="showTab('events')">🗓️ Events</button>
+    <button class="tab" onclick="showTab('search')">🔍 Volunteer Search</button>
+    <button class="tab" onclick="showTab('yearly')">📊 Year by Year</button>
+  </div>
+
+  <!-- ── INSIGHTS PAGE ── -->
+  <div class="page active" id="page-insights">
+    <div class="section-head">
+      <div>
+        <div class="section-title">People Insights</div>
+        <div class="section-sub">Who to grow, who to recognise, who to reconnect with</div>
+      </div>
+      <button class="rf-btn" id="rf-insights" onclick="loadDashboard(true)">
+        <span class="rfi">🔄</span> Refresh
+      </button>
+    </div>
+
+    <!-- Summary strip -->
+    <div class="sum-grid" id="sum-grid">
+      <div class="sum-card"><div class="sum-ic">👥</div><div class="sum-num" id="s-vols">—</div><div class="sum-lbl">Volunteers</div></div>
+      <div class="sum-card"><div class="sum-ic">🗓️</div><div class="sum-num" id="s-evts">—</div><div class="sum-lbl">Events</div></div>
+      <div class="sum-card"><div class="sum-ic">✅</div><div class="sum-num" id="s-recs">—</div><div class="sum-lbl">Attendances</div></div>
+      <div class="sum-card"><div class="sum-ic">📅</div><div class="sum-num" id="s-yrs">—</div><div class="sum-lbl">Years of Data</div></div>
+    </div>
+
+    <div id="insights-loading" class="loading"><span class="spinner"></span>Loading insights from Google Sheets…</div>
+
+    <div class="insight-grid" id="insight-grid" style="display:none;">
+      <!-- Ready to Lead -->
+      <div class="insight-panel">
+        <div class="ip-head gold">
+          <div class="ip-count gold" id="c-lead">0</div>
+          <div class="ip-title gold">🌟 Ready to Lead</div>
+          <div class="ip-desc">15+ events · 2+ years · active within 3 months</div>
+        </div>
+        <div class="ip-list" id="list-lead"></div>
+      </div>
+
+      <!-- Slipping Away -->
+      <div class="insight-panel">
+        <div class="ip-head purple">
+          <div class="ip-count purple" id="c-slip">0</div>
+          <div class="ip-title purple">💜 Slipping Away</div>
+          <div class="ip-desc">3+ events · haven't attended in 4+ months</div>
+        </div>
+        <div class="ip-list" id="list-slip"></div>
+      </div>
+
+      <!-- Unrecognised -->
+      <div class="insight-panel">
+        <div class="ip-head teal">
+          <div class="ip-count teal" id="c-unrec">0</div>
+          <div class="ip-title teal">🎖️ Unrecognised Milestones</div>
+          <div class="ip-desc">Hit a milestone but haven't been celebrated</div>
+        </div>
+        <div class="ip-list" id="list-unrec"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LEADERBOARD PAGE ── -->
+  <div class="page" id="page-leaderboard">
+    <div class="section-head">
+      <div>
+        <div class="section-title">🏆 Leaderboard</div>
+        <div class="section-sub">Top volunteers by attendance</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <div class="year-pills" id="year-pills"></div>
+        <button class="rf-btn" id="rf-lb" onclick="loadDashboard(true)"><span class="rfi">🔄</span></button>
+      </div>
+    </div>
+    <div id="lb-loading" class="loading"><span class="spinner"></span>Loading…</div>
+    <table class="lb-table" id="lb-table" style="display:none;">
+      <thead><tr>
+        <th style="width:50px;">Rank</th>
+        <th>Name</th>
+        <th style="width:80px;">Events</th>
+        <th style="width:60px;">Years</th>
+        <th style="width:100px;">Last Attended</th>
+        <th style="width:140px;"></th>
+      </tr></thead>
+      <tbody id="lb-body"></tbody>
+    </table>
+  </div>
+
+  <!-- ── EVENTS PAGE ── -->
+  <div class="page" id="page-events">
+    <div class="section-head">
+      <div>
+        <div class="section-title">🗓️ Event Summary</div>
+        <div class="section-sub">Attendance per event · tap to see who attended</div>
+      </div>
+      <button class="rf-btn" id="rf-ev" onclick="loadDashboard(true)"><span class="rfi">🔄</span></button>
+    </div>
+    <div id="ev-loading" class="loading"><span class="spinner"></span>Loading…</div>
+    <div class="event-grid" id="ev-grid" style="display:none;"></div>
+  </div>
+
+  <!-- ── SEARCH PAGE ── -->
+  <div class="page" id="page-search">
+    <div class="section-title" style="margin-bottom:14px;">🔍 Volunteer Search</div>
+    <div class="search-wrap">
+      <input type="text" class="search-input" id="s-input" placeholder="Type volunteer name…" autocomplete="off">
+      <span class="search-ic">🔍</span>
+      <div class="name-dropdown" id="s-dropdown"></div>
+    </div>
+    <div id="s-result"></div>
+  </div>
+
+  <!-- ── YEARLY PAGE ── -->
+  <div class="page" id="page-yearly">
+    <div class="section-head">
+      <div>
+        <div class="section-title">📊 Year by Year Champions</div>
+        <div class="section-sub">Top volunteers per year · who showed up the most</div>
+      </div>
+      <button class="rf-btn" onclick="loadYearly(true)"><span class="rfi">🔄</span> Refresh</button>
+    </div>
+    <div id="yr-loading" class="loading"><span class="spinner"></span>Loading…</div>
+    <div id="yr-content" style="display:none;"></div>
+  </div>
+
+</div>
+
+<script defer>
+const API = 'https://script.google.com/macros/s/AKfycbyhVPDPFSIVuvhnuoFaWEG1BlUypV34TNw0Q4uudyASyegw1ZpGW0FWY2G9WdHWAMHcPQ/exec';
+const MILESTONES = [5,10,20,30,40,50,75,100];
+const MILESTONE_LABELS = {5:'Growing Heart',10:'Dedicated Heart',20:'Star Volunteer',30:'Committed Heart',40:'Rising Champion',50:'Champion Volunteer',75:'Inspiring Heart',100:'Twinkle Hearts Legend'};
+const BACKSTAGE_HEROES = ['Joe Tan','Chin Mee Shyan','Pan Wen','Ritesh Maheshwari','Royce Wong','Linn','Bernice Bay','Sze Min','Siew Mui','Shirley Chua','Yvonne Ng','Deborah'];
+
+let dashData   = null;
+let allNames   = [];
+let activeYear = 'All';
+
+// ── Tab switching ────────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('page-' + id).classList.add('active');
+  if (id === 'search' && allNames.length === 0) loadNames();
+  if (id === 'yearly') loadYearly();
+}
+
+// ── Load dashboard data ──────────────────────────────────────
+async function loadDashboard(force = false) {
+  if (dashData && !force) return;
+
+  // Spin refresh buttons
+  document.querySelectorAll('.rf-btn').forEach(b => b.classList.add('spin'));
+  document.getElementById('insights-loading').style.display = 'block';
+  document.getElementById('insight-grid').style.display     = 'none';
+  document.getElementById('lb-loading').style.display       = 'block';
+  document.getElementById('lb-table').style.display         = 'none';
+  document.getElementById('ev-loading').style.display       = 'block';
+  document.getElementById('ev-grid').style.display          = 'none';
+
+  try {
+    const res  = await fetch(`${API}?action=getDashboard`, { redirect: 'follow' });
+    const data = await res.json();
+    dashData   = data;
+    renderAll();
+  } catch(e) {
+    document.getElementById('insights-loading').textContent = '⚠️ Could not load data. Are you connected to the internet?';
+  } finally {
+    document.querySelectorAll('.rf-btn').forEach(b => b.classList.remove('spin'));
+  }
+}
+
+function renderAll() {
+  if (!dashData) return;
+  renderSummary();
+  renderInsights();
+  renderLeaderboard();
+  renderEvents();
+}
+
+// ── Summary strip ────────────────────────────────────────────
+function renderSummary() {
+  const s = dashData.summary;
+  document.getElementById('s-vols').textContent = s.totalVolunteers.toLocaleString();
+  document.getElementById('s-evts').textContent = s.totalEvents.toLocaleString();
+  document.getElementById('s-recs').textContent = s.totalRecords.toLocaleString();
+  document.getElementById('s-yrs').textContent  = s.years.length;
+}
+
+// ── Helpers ──────────────────────────────────────────────────
+function monthsAgo(dateStr) {
+  if (!dateStr) return 99;
+  const d = new Date(dateStr), n = new Date();
+  return (n.getFullYear() - d.getFullYear()) * 12 + (n.getMonth() - d.getMonth());
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-SG', { day:'numeric', month:'short', year:'numeric' });
+}
+function getMilestone(total) {
+  const ms = MILESTONES.slice().reverse().find(m => total >= m);
+  return ms ? { value: ms, label: MILESTONE_LABELS[ms] } : null;
+}
+
+// ── Insights ─────────────────────────────────────────────────
+function renderInsights() {
+  const lb = dashData.leaderboard;
+
+  // Build per-volunteer stats
+  const stats = {};
+  lb.forEach(v => {
+    stats[v.name] = { total: v.total, years: v.years, lastDate: v.lastDate };
+  });
+
+  // Also need event records per year — use leaderboard for counts but need year breakdown
+  // We'll compute from getDashboard leaderboard which has total, years, lastDate
+
+  const readyToLead = [], slipping = [], unrecognised = [];
+
+  lb.forEach(v => {
+    const ago       = monthsAgo(v.lastDate);
+    const isHero    = BACKSTAGE_HEROES.includes(v.name);
+    const milestone = getMilestone(v.total);
+
+    // 🌟 Ready to Lead: 15+ events, 2+ years, active within 3 months, not already hero
+    if (v.total >= 15 && v.years >= 2 && ago <= 3 && !isHero) {
+      readyToLead.push(v);
+    }
+
+    // 💜 Slipping: 3+ events, 4+ months quiet
+    if (v.total >= 3 && ago >= 4) {
+      slipping.push(v);
+    }
+
+    // 🎖️ Unrecognised: hit a milestone, not a backstage hero
+    if (milestone && !isHero) {
+      // Flag all milestone volunteers — Siew Mui can check who hasn't been celebrated
+      unrecognised.push({ ...v, milestone });
+    }
+  });
+
+  // Sort slipping by most months quiet first
+  slipping.sort((a, b) => monthsAgo(b.lastDate) - monthsAgo(a.lastDate));
+  // Sort unrecognised by milestone value desc
+  unrecognised.sort((a, b) => b.milestone.value - a.milestone.value);
+
+  // Render Ready to Lead
+  document.getElementById('c-lead').textContent = readyToLead.length;
+  const leadEl = document.getElementById('list-lead');
+  if (readyToLead.length === 0) {
+    leadEl.innerHTML = '<div class="ip-empty">No volunteers matching criteria yet.</div>';
+  } else {
+    leadEl.innerHTML = readyToLead.map(v => `
+      <div class="ip-row">
+        <div>
+          <div class="ip-name">${v.name}</div>
+          <div class="ip-meta">${v.total} events · ${v.years} year${v.years!==1?'s':''} · Last: ${fmtDate(v.lastDate)}</div>
+          <div class="ip-rec">💡 Consider inviting ${v.name.split(' ')[0]} to join the planning team — consistently showing up for ${v.years} years.</div>
+        </div>
+      </div>`).join('');
+  }
+
+  // Render Slipping
+  document.getElementById('c-slip').textContent = slipping.length;
+  const slipEl = document.getElementById('list-slip');
+  if (slipping.length === 0) {
+    slipEl.innerHTML = '<div class="ip-empty">Everyone is active! 🎉</div>';
+  } else {
+    slipEl.innerHTML = slipping.map(v => {
+      const ago = monthsAgo(v.lastDate);
+      const badge = ago >= 6
+        ? `<span class="badge-pill badge-red">6+ months</span>`
+        : `<span class="badge-pill badge-purple">${ago} months</span>`;
+      const rec = ago >= 6
+        ? `💜 ${v.name.split(' ')[0]} has been away for over 6 months (${v.total} events). A personal message from Siew Mui could make a difference.`
+        : `💜 Reach out to ${v.name.split(' ')[0]} — last seen ${fmtDate(v.lastDate)}. A friendly nudge might bring them back.`;
+      return `
+        <div class="ip-row">
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+              <div class="ip-name">${v.name}</div>${badge}
+            </div>
+            <div class="ip-meta">${v.total} events total · Last: ${fmtDate(v.lastDate)}</div>
+            <div class="ip-rec">${rec}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // Render Unrecognised
+  document.getElementById('c-unrec').textContent = unrecognised.length;
+  const unrecEl = document.getElementById('list-unrec');
+  if (unrecognised.length === 0) {
+    unrecEl.innerHTML = '<div class="ip-empty">All milestones recognised! 🎉</div>';
+  } else {
+    unrecEl.innerHTML = unrecognised.map(v => `
+      <div class="ip-row">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <div class="ip-name">${v.name}</div>
+            <span class="badge-pill badge-teal">${v.milestone.value} events</span>
+          </div>
+          <div class="ip-meta">${v.milestone.label} · ${v.total} total events</div>
+          <div class="ip-rec">🎖️ Send ${v.name.split(' ')[0]} a congratulations message for reaching ${v.milestone.value} events — "${v.milestone.label}"!</div>
+        </div>
+      </div>`).join('');
+  }
+
+  document.getElementById('insights-loading').style.display = 'none';
+  document.getElementById('insight-grid').style.display     = 'grid';
+}
+
+// ── Leaderboard ──────────────────────────────────────────────
+function renderLeaderboard() {
+  const years = ['All', ...dashData.summary.years];
+
+  // Year pills
+  const pillsEl = document.getElementById('year-pills');
+  pillsEl.innerHTML = years.map(y =>
+    `<button class="ypill ${y === activeYear ? 'active' : ''}" onclick="setYear('${y}')">${y}</button>`
+  ).join('');
+
+  renderLbTable();
+  document.getElementById('lb-loading').style.display = 'none';
+  document.getElementById('lb-table').style.display   = 'table';
+}
+
+function setYear(y) {
+  activeYear = y;
+  document.querySelectorAll('.ypill').forEach(p => p.classList.toggle('active', p.textContent === y));
+  renderLbTable();
+}
+
+function renderLbTable() {
+  // Filter by year — need per-year data
+  // getDashboard returns total across all years; for year filter we need getAllRecords
+  // For now use total (all years) and note year filter needs getAllRecords
+  let data = dashData.leaderboard;
+
+  if (activeYear !== 'All') {
+    // We need to filter — fetch per-year data
+    renderLbTableFromRecords();
+    return;
+  }
+
+  const maxTotal = data[0]?.total || 1;
+  const medals   = ['🥇','🥈','🥉'];
+  const body     = document.getElementById('lb-body');
+  body.innerHTML = data.slice(0, 100).map((v, i) => {
+    const rankClass = i < 3 ? `rank-${i+1}` : 'rank-n';
+    const rankDisp  = i < 3 ? medals[i] : `#${i+1}`;
+    const barW      = Math.round((v.total / maxTotal) * 100);
+    return `<tr>
+      <td class="${rankClass}">${rankDisp}</td>
+      <td class="lb-name">${v.name}</td>
+      <td><strong>${v.total}</strong></td>
+      <td>${v.years}</td>
+      <td>${fmtDate(v.lastDate)}</td>
+      <td><div class="lb-bar-wrap"><div class="lb-bar" style="width:${barW}%"></div></div></td>
+    </tr>`;
+  }).join('');
+}
+
+async function renderLbTableFromRecords() {
+  document.getElementById('lb-loading').style.display = 'block';
+  document.getElementById('lb-table').style.display   = 'none';
+  try {
+    const res  = await fetch(`${API}?action=getAllRecords`, { redirect: 'follow' });
+    const data = await res.json();
+    const recs = data.records || [];
+
+    // Filter by year
+    const filtered = recs.filter(r => String(r.Year) === activeYear);
+
+    // Aggregate
+    const map = {};
+    filtered.forEach(r => {
+      if (!map[r.Name]) map[r.Name] = { name: r.Name, total: 0, lastDate: '' };
+      map[r.Name].total++;
+      if (r.Date > map[r.Name].lastDate) map[r.Name].lastDate = r.Date;
+    });
+    const sorted = Object.values(map).sort((a,b) => b.total - a.total);
+    const maxTotal = sorted[0]?.total || 1;
+    const medals = ['🥇','🥈','🥉'];
+    const body = document.getElementById('lb-body');
+    body.innerHTML = sorted.slice(0, 100).map((v, i) => {
+      const rankClass = i < 3 ? `rank-${i+1}` : 'rank-n';
+      const barW = Math.round((v.total / maxTotal) * 100);
+      return `<tr>
+        <td class="${rankClass}">${i < 3 ? medals[i] : '#' + (i+1)}</td>
+        <td class="lb-name">${v.name}</td>
+        <td><strong>${v.total}</strong></td>
+        <td>—</td>
+        <td>${fmtDate(v.lastDate)}</td>
+        <td><div class="lb-bar-wrap"><div class="lb-bar" style="width:${barW}%"></div></div></td>
+      </tr>`;
+    }).join('');
+    document.getElementById('lb-loading').style.display = 'none';
+    document.getElementById('lb-table').style.display   = 'table';
+  } catch(e) {
+    document.getElementById('lb-loading').textContent = '⚠️ Could not load year data.';
+  }
+}
+
+// ── Events ───────────────────────────────────────────────────
+function renderEvents() {
+  const events  = dashData.events;
+  const grid    = document.getElementById('ev-grid');
+  grid.innerHTML = events.map((e, i) => `
+    <div class="ev-card" id="ev-${i}" onclick="toggleEvent(${i})">
+      <div class="ev-name">${e.name}</div>
+      <div class="ev-meta">📅 ${fmtDate(e.date)} ${e.beneficiary ? ' · 📍 ' + e.beneficiary : ''}</div>
+      <div class="ev-count">
+        <div class="ev-num">${e.count}</div>
+        <div class="ev-lbl">volunteers attended</div>
+      </div>
+      <div class="ev-attendees" id="att-${i}">${e.attendees.sort().join(' · ')}</div>
+    </div>`).join('');
+  document.getElementById('ev-loading').style.display = 'none';
+  grid.style.display = 'grid';
+}
+
+function toggleEvent(i) {
+  document.getElementById('ev-' + i).classList.toggle('expanded');
+}
+
+// ── Volunteer search ─────────────────────────────────────────
+async function loadNames() {
+  try {
+    const res  = await fetch(`${API}?action=getNames`, { redirect: 'follow' });
+    const data = await res.json();
+    if (data.names) allNames = data.names;
+  } catch(e) {}
+}
+
+const sInput = document.getElementById('s-input');
+const sDrop  = document.getElementById('s-dropdown');
+
+sInput.addEventListener('input', () => {
+  const q = sInput.value.trim().toLowerCase();
+  if (q.length < 1) { sDrop.classList.remove('show'); return; }
+  const matches = allNames.filter(n => n.toLowerCase().includes(q)).slice(0, 8);
+  if (!matches.length) { sDrop.classList.remove('show'); return; }
+  sDrop.innerHTML = matches.map(n =>
+    `<div class="name-option" data-name="${n.replace(/"/g,'&quot;')}">${n}</div>`
+  ).join('');
+  sDrop.classList.add('show');
+  sDrop.querySelectorAll('.name-option').forEach(el =>
+    el.addEventListener('click', () => searchVol(el.dataset.name))
+  );
+});
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) sDrop.classList.remove('show');
+});
+
+async function searchVol(name) {
+  sInput.value = name;
+  sDrop.classList.remove('show');
+  const res_el = document.getElementById('s-result');
+  res_el.innerHTML = '<div class="loading"><span class="spinner"></span>Loading…</div>';
+  try {
+    const res  = await fetch(`${API}?action=getRecords&name=${encodeURIComponent(name)}`, { redirect: 'follow' });
+    const data = await res.json();
+    const recs = data.records || [];
+    if (!recs.length) {
+      res_el.innerHTML = '<div class="empty">No records found for this volunteer.</div>';
+      return;
+    }
+    const total  = recs.length;
+    const years  = [...new Set(recs.map(r => r.Year).filter(Boolean))];
+    const thisYr = recs.filter(r => String(r.Year) === new Date().getFullYear().toString()).length;
+    const ms     = getMilestone(total);
+    const byYear = {};
+    recs.forEach(r => { const y = r.Year||'Unknown'; if(!byYear[y]) byYear[y]=[]; byYear[y].push(r); });
+
+    res_el.innerHTML = `
+      <div class="vol-card">
+        <div class="vol-name">Records for <em>${name}</em></div>
+        <div class="vol-pills">
+          <div class="vpill"><div class="vpill-dot dot-rose"></div>${total} attended</div>
+          <div class="vpill"><div class="vpill-dot dot-teal"></div>${years.length} year${years.length!==1?'s':''}</div>
+          <div class="vpill"><div class="vpill-dot dot-amber"></div>${thisYr} this year</div>
+          ${ms ? `<div class="vpill"><div class="vpill-dot dot-amber"></div>${ms.label}</div>` : ''}
+        </div>
+        ${Object.entries(byYear).sort((a,b)=>b[0].localeCompare(a[0])).map(([yr, evts]) => `
+          <div class="yr-divider"><span>${yr}</span></div>
+          ${evts.map(r => `
+            <div class="rec-row">
+              <div>
+                <div class="rec-name">${r.Event||'—'}</div>
+                ${r.Beneficiary ? `<div class="rec-date">📍 ${r.Beneficiary}</div>` : ''}
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div class="rec-date">📅 ${fmtDate(r.Date)}</div>
+                <div class="attended">✓</div>
+              </div>
+            </div>`).join('')}
+        `).join('')}
+      </div>`;
+  } catch(e) {
+    res_el.innerHTML = '<div class="empty">⚠️ Could not load records.</div>';
+  }
+}
+
+
+
+// ── Yearly Analysis ──────────────────────────────────────────
+let yearlyRecs = null;
+
+async function loadYearly(force = false) {
+  if (yearlyRecs && !force) { renderYearly(); return; }
+  document.getElementById('yr-loading').style.display  = 'block';
+  document.getElementById('yr-content').style.display  = 'none';
+  try {
+    const res  = await fetch(`${API}?action=getAllRecords`, { redirect: 'follow' });
+    const data = await res.json();
+    yearlyRecs = data.records || [];
+    renderYearly();
+  } catch(e) {
+    document.getElementById('yr-loading').textContent = '⚠️ Could not load data.';
+  }
+}
+
+function renderYearly() {
+  // Build maps
+  const yearMap  = {};  // year → { name → count }
+  const allTime  = {};  // name → total
+  const lastDate = {};  // name → lastDate
+
+  yearlyRecs.forEach(r => {
+    const yr = String(r.Year || 'Unknown');
+    if (!yearMap[yr]) yearMap[yr] = {};
+    yearMap[yr][r.Name] = (yearMap[yr][r.Name] || 0) + 1;
+    allTime[r.Name]  = (allTime[r.Name] || 0) + 1;
+    if (!lastDate[r.Name] || r.Date > lastDate[r.Name]) lastDate[r.Name] = r.Date;
+  });
+
+  const years = Object.keys(yearMap).filter(y => y !== 'Unknown').sort().reverse();
+  const medals = ['🥇','🥈','🥉'];
+
+  // All-time top 15 with year breakdown
+  const allTimeSorted = Object.entries(allTime)
+    .sort((a,b) => b[1]-a[1]).slice(0,15);
+  const maxTotal = allTimeSorted[0]?.[1] || 1;
+
+  let html = '';
+
+  // Cross-year table
+  html += `
+  <div style="margin-bottom:28px;overflow-x:auto;">
+    <div class="section-title" style="margin-bottom:12px;">🏆 All-Time Top 15 with Year Breakdown</div>
+    <table class="lb-table">
+      <thead><tr>
+        <th style="width:44px;">Rank</th>
+        <th>Name</th>
+        <th style="width:64px;text-align:center;">Total</th>
+        ${years.map(y=>`<th style="width:58px;text-align:center;">${y}</th>`).join('')}
+        <th style="width:120px;"></th>
+      </tr></thead>
+      <tbody>
+        ${allTimeSorted.map(([name,total],i) => {
+          const rankDisp  = i < 3 ? medals[i] : `#${i+1}`;
+          const rankClass = i < 3 ? `rank-${i+1}` : 'rank-n';
+          const barW      = Math.round((total/maxTotal)*100);
+          const yrCells   = years.map(y => {
+            const cnt     = yearMap[y]?.[name] || 0;
+            const yrTop   = yearMap[y] ? Math.max(...Object.values(yearMap[y])) : 0;
+            const isChamp = cnt > 0 && cnt === yrTop;
+            return `<td style="text-align:center;">${
+              cnt > 0
+                ? `<strong style="color:${isChamp?'var(--amber)':'var(--navy)'}">${cnt}${isChamp?' 🏆':''}</strong>`
+                : '<span style="color:var(--border)">—</span>'
+            }</td>`;
+          }).join('');
+          return `<tr>
+            <td class="${rankClass}">${rankDisp}</td>
+            <td class="lb-name">${name}</td>
+            <td style="text-align:center;"><strong>${total}</strong></td>
+            ${yrCells}
+            <td><div class="lb-bar-wrap"><div class="lb-bar" style="width:${barW}%"></div></div></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+
+  // Key insights strip
+  // Consistency: in top 10 every year
+  const allYearsTopNames = Object.entries(allTime)
+    .filter(([name]) => years.every(y => (yearMap[y]?.[name]||0) > 0))
+    .sort((a,b) => b[1]-a[1]).slice(0,5);
+
+  // Biggest growth last 2 years
+  const lastTwo = years.slice(0,2).reverse(); // e.g. [2024, 2025]
+  let growth = [];
+  if (lastTwo.length === 2) {
+    Object.keys(allTime).forEach(name => {
+      const y0 = yearMap[lastTwo[0]]?.[name] || 0;
+      const y1 = yearMap[lastTwo[1]]?.[name] || 0;
+      if (y0 > 0 && y1 > y0) growth.push({ name, from: y0, to: y1, delta: y1-y0 });
+    });
+    growth.sort((a,b) => b.delta-a.delta);
+  }
+
+  // New in latest year
+  const latestYr  = years[0];
+  const prevYr    = years[1];
+  const newStars  = prevYr
+    ? Object.entries(yearMap[latestYr]||{})
+        .filter(([name,cnt]) => cnt >= 3 && !(yearMap[prevYr]?.[name]))
+        .sort((a,b) => b[1]-a[1]).slice(0,5)
+    : [];
+
+  html += `
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;">
+
+    <div class="insight-panel">
+      <div class="ip-head gold">
+        <div class="ip-count gold">${allYearsTopNames.length}</div>
+        <div class="ip-title gold">🔁 Iron Volunteers</div>
+        <div class="ip-desc">Attended every single year</div>
+      </div>
+      <div class="ip-list">
+        ${allYearsTopNames.length === 0
+          ? '<div class="ip-empty">None yet</div>'
+          : allYearsTopNames.map(([name,total]) => `
+            <div class="ip-row">
+              <div>
+                <div class="ip-name">${name}</div>
+                <div class="ip-meta">${total} total · ${years.map(y=>`${y}: ${yearMap[y]?.[name]||0}`).join(' · ')}</div>
+                <div class="ip-rec">💪 Never missed a year since 2023. Truly dependable.</div>
+              </div>
+            </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="insight-panel">
+      <div class="ip-head teal">
+        <div class="ip-count teal">${growth.slice(0,5).length}</div>
+        <div class="ip-title teal">📈 Fastest Growing</div>
+        <div class="ip-desc">Biggest jump ${lastTwo[0]||''} → ${lastTwo[1]||''}</div>
+      </div>
+      <div class="ip-list">
+        ${growth.length === 0
+          ? '<div class="ip-empty">Not enough data</div>'
+          : growth.slice(0,5).map(g => `
+            <div class="ip-row">
+              <div>
+                <div class="ip-name">${g.name}</div>
+                <div class="ip-meta">${g.from} → ${g.to} events <span class="badge-pill badge-teal">+${g.delta}</span></div>
+                <div class="ip-rec">🌱 ${g.name.split(' ')[0]} nearly doubled their commitment — worth recognising.</div>
+              </div>
+            </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="insight-panel">
+      <div class="ip-head purple">
+        <div class="ip-count purple">${newStars.length}</div>
+        <div class="ip-title purple">⭐ Strong New Faces</div>
+        <div class="ip-desc">New in ${latestYr}, already showing up</div>
+      </div>
+      <div class="ip-list">
+        ${newStars.length === 0
+          ? '<div class="ip-empty">None yet</div>'
+          : newStars.map(([name,cnt]) => `
+            <div class="ip-row">
+              <div>
+                <div class="ip-name">${name}</div>
+                <div class="ip-meta">${cnt} events in first year (${latestYr})</div>
+                <div class="ip-rec">👋 Impressive debut — nurture this momentum early.</div>
+              </div>
+            </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+
+  // Per-year top 10 panels
+  html += `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;">`;
+  years.forEach(yr => {
+    const sorted = Object.entries(yearMap[yr]).sort((a,b)=>b[1]-a[1]).slice(0,10);
+    const total  = Object.values(yearMap[yr]).reduce((a,b)=>a+b,0);
+    const vols   = Object.keys(yearMap[yr]).length;
+    html += `
+      <div style="background:var(--white);border-radius:16px;overflow:hidden;box-shadow:0 1px 6px var(--shadow);">
+        <div style="background:var(--navy);padding:14px 16px;">
+          <div style="font-family:'DM Serif Display',serif;font-size:18px;color:white;">📅 ${yr}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px;">${vols} volunteers · ${total} attendances</div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;">
+          ${sorted.map(([name,cnt],i) => `
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px;width:36px;font-size:${i<3?'16px':'12px'};color:var(--mid);">${i<3?medals[i]:'#'+(i+1)}</td>
+              <td style="padding:10px 4px;font-size:13px;font-weight:${i<3?'600':'400'};color:var(--ink);">${name}</td>
+              <td style="padding:10px 14px;text-align:right;font-size:13px;font-weight:600;color:var(--navy);">${cnt}</td>
+            </tr>`).join('')}
+        </table>
+      </div>`;
+  });
+  html += `</div>`;
+
+  document.getElementById('yr-content').innerHTML = html;
+  document.getElementById('yr-loading').style.display = 'none';
+  document.getElementById('yr-content').style.display = 'block';
+}
+
+// Load on start
+loadDashboard();
+</script>
+</body>
+</html>
