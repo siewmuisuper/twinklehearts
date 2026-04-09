@@ -162,6 +162,37 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);-web
   .lb-bar-wrap{display:none;}
   .main{padding:16px 14px 80px;}
 }
+
+/* ── Stats page ── */
+.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
+.chart-card { background:var(--white); border-radius:16px; padding:20px; box-shadow:0 1px 6px var(--shadow); }
+.chart-title { font-size:14px; font-weight:600; color:var(--ink); margin-bottom:4px; }
+.chart-sub   { font-size:12px; color:var(--mid); margin-bottom:16px; }
+.bar-wrap { display:flex; flex-direction:column; gap:10px; }
+.bar-row  { display:flex; align-items:center; gap:10px; }
+.bar-label{ font-size:12px; color:var(--ink-mid); width:72px; flex-shrink:0; text-align:right; }
+.bar-track{ flex:1; height:22px; background:var(--border); border-radius:6px; overflow:hidden; position:relative; }
+.bar-fill { height:100%; border-radius:6px; transition:width .6s ease; display:flex; align-items:center; padding-left:8px; }
+.bar-val  { font-size:11px; font-weight:700; color:white; white-space:nowrap; }
+.bar-val-out { font-size:11px; font-weight:600; color:var(--ink-mid); margin-left:6px; }
+.bene-amk { background:var(--rose); }
+.bene-bb  { background:var(--teal); }
+.bene-csu { background:var(--amber); }
+.bene-wld { background:var(--navy); }
+.bene-yr  { background:var(--navy); }
+.legend   { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
+.leg-item { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--ink-mid); }
+.leg-dot  { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+.tbc-note { font-size:11px; color:var(--mid); font-style:italic; margin-top:10px; padding:8px 12px; background:var(--amber-light); border-radius:8px; }
+.stat-table { width:100%; border-collapse:collapse; font-size:13px; }
+.stat-table th { background:var(--navy); color:white; padding:10px 14px; text-align:left; font-size:12px; font-weight:600; }
+.stat-table td { padding:10px 14px; border-bottom:1px solid var(--border); }
+.stat-table tr:last-child td { border-bottom:none; }
+.stat-table tr:hover td { background:#faf8f5; }
+.growth-up   { color:var(--teal); font-weight:600; }
+.growth-down { color:var(--rose); font-weight:600; }
+@media(max-width:640px){ .stat-grid { grid-template-columns:1fr; } }
+
 </style>
 </head>
 <body>
@@ -174,11 +205,27 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);-web
 
   <!-- Tabs -->
   <div class="tabs">
+    <button class="tab" onclick="showTab('overview')">📈 Overview</button>
     <button class="tab active" onclick="showTab('insights')">💡 People Insights</button>
     <button class="tab" onclick="showTab('leaderboard')">🏆 Leaderboard</button>
     <button class="tab" onclick="showTab('events')">🗓️ Events</button>
     <button class="tab" onclick="showTab('search')">🔍 Volunteer Search</button>
     <button class="tab" onclick="showTab('yearly')">📊 Year by Year</button>
+    <button class="tab" onclick="showTab('stats')">📈 Attendance Stats</button>
+  </div>
+
+
+  <!-- ── OVERVIEW PAGE ── -->
+  <div class="page" id="page-overview">
+    <div class="section-head">
+      <div>
+        <div class="section-title">📈 Overview</div>
+        <div class="section-sub">Yearly attendance totals and breakdown by beneficiary</div>
+      </div>
+      <button class="rf-btn" onclick="loadOverview(true)"><span class="rfi">🔄</span> Refresh</button>
+    </div>
+    <div id="ov-loading" class="loading"><span class="spinner"></span>Loading…</div>
+    <div id="ov-content" style="display:none;"></div>
   </div>
 
   <!-- ── INSIGHTS PAGE ── -->
@@ -286,6 +333,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);-web
     <div id="s-result"></div>
   </div>
 
+
+  <!-- ── STATS PAGE ── -->
+  <div class="page" id="page-stats">
+    <div class="section-head">
+      <div>
+        <div class="section-title">📈 Attendance Statistics</div>
+        <div class="section-sub">Yearly totals and breakdown by beneficiary</div>
+      </div>
+      <button class="rf-btn" onclick="loadStats(true)"><span class="rfi">🔄</span> Refresh</button>
+    </div>
+    <div id="stats-loading" class="loading"><span class="spinner"></span>Loading…</div>
+    <div id="stats-content" style="display:none;"></div>
+  </div>
+
   <!-- ── YEARLY PAGE ── -->
   <div class="page" id="page-yearly">
     <div class="section-head">
@@ -319,6 +380,8 @@ function showTab(id) {
   document.getElementById('page-' + id).classList.add('active');
   if (id === 'search' && allNames.length === 0) loadNames();
   if (id === 'yearly') loadYearly();
+  if (id === 'stats') loadStats();
+  if (id === 'overview') loadOverview();
 }
 
 // ── Load dashboard data ──────────────────────────────────────
@@ -680,6 +743,407 @@ async function searchVol(name) {
 }
 
 
+
+
+// ── Overview ─────────────────────────────────────────────────
+let overviewRecs = null;
+
+const MANUAL_MAP = {
+  'Apr Birthday Celebration':'CSU','Aug Birthday Celebration':'CSU',
+  'Feb Birthday Celebration':'CSU','Jul Birthday Celebration':'CSU',
+  'Oct Birthday Celebration':'CSU','Nov Birthday Celebration':'CSU',
+  'Dec Birthday Celebration':'CSU','Family Portrait':'CSU',
+  'Family Portrait and birthday celebration':'CSU',
+  'Chinatown Outing':'BB',
+};
+
+function normaliseBene(raw) {
+  if (!raw || !raw.trim()) return [];
+  const r = raw.toUpperCase();
+  const out = new Set();
+  if (/\bAMK\b|ANG MO KIO|AMKNH/.test(r))   out.add('AMK');
+  if (/\bBB\b|\bBBNH\b|BUKIT.BATOK/.test(r)) out.add('BB');
+  if (/\bWLD\b|\bWLDS\b|WOODLANDS/.test(r))  out.add('Woodlands');
+  if (/\bCSU\b|CHRONIC SICK/.test(r))          out.add('CSU');
+  return [...out].sort();
+}
+
+function getBeneficiaries(event, existing) {
+  if (existing && existing.trim()) {
+    const n = normaliseBene(existing);
+    return n.length ? n : ['Multiple'];
+  }
+  if (MANUAL_MAP[event]) return [MANUAL_MAP[event]];
+  const n = normaliseBene(event);
+  return n.length ? n : ['Multiple'];
+}
+
+async function loadOverview(force = false) {
+  if (overviewRecs && !force) { renderOverview(); return; }
+  document.getElementById('ov-loading').style.display  = 'block';
+  document.getElementById('ov-content').style.display  = 'none';
+  try {
+    const res  = await fetch(`${API}?action=getAllRecords`, { redirect:'follow' });
+    const data = await res.json();
+    overviewRecs = data.records || [];
+    renderOverview();
+  } catch(e) {
+    document.getElementById('ov-loading').textContent = '⚠️ Could not load data.';
+  }
+}
+
+function renderOverview() {
+  const recs = overviewRecs;
+
+  // ── Yearly summary ────────────────────────────────────────
+  const yearMap = {};
+  recs.forEach(r => {
+    const yr = String(r.Year||'Unknown');
+    if (!yearMap[yr]) yearMap[yr] = { attendances:0, names:new Set(), events:new Set() };
+    yearMap[yr].attendances++;
+    yearMap[yr].names.add(r.Name);
+    yearMap[yr].events.add(r.Event);
+  });
+  const years = Object.keys(yearMap).filter(y=>y!=='Unknown').sort();
+  const maxAtt = Math.max(...years.map(y=>yearMap[y].attendances));
+
+  // ── Beneficiary breakdown ─────────────────────────────────
+  const beneYearMap = {}; // bene → year → count
+  const beneTotal   = {};
+  let covered = 0, total = 0;
+
+  recs.forEach(r => {
+    const benes = getBeneficiaries(r.Event||'', r.Beneficiary||'');
+    benes.forEach(b => {
+      if (b === 'Multiple') return;
+      covered++;
+      if (!beneYearMap[b]) beneYearMap[b] = {};
+      if (!beneYearMap[b][r.Year]) beneYearMap[b][r.Year] = 0;
+      beneYearMap[b][r.Year]++;
+      beneTotal[b] = (beneTotal[b]||0) + 1;
+    });
+    total++;
+  });
+
+  const benes    = Object.keys(beneTotal).sort((a,b)=>beneTotal[b]-beneTotal[a]);
+  const maxBene  = Math.max(...Object.values(beneTotal));
+  const coverage = Math.round(covered/total*100);
+  const BCOLS    = { AMK:'#2d6a5a', BB:'#b83a2e', CSU:'#b8820a', Woodlands:'#7b5ea7' };
+
+  let html = '';
+
+  // ── Section 1: Yearly chart + table ──────────────────────
+  html += `
+  <div style="background:var(--white);border-radius:16px;padding:22px 24px;box-shadow:0 1px 6px var(--shadow);margin-bottom:20px;">
+    <div class="section-title" style="margin-bottom:4px;">📅 Attendance by Year</div>
+    <div style="font-size:12px;color:var(--mid);margin-bottom:20px;">Total attendances, unique volunteers and events per year</div>
+
+    <!-- Bar chart -->
+    <div style="display:flex;align-items:flex-end;gap:16px;height:160px;margin-bottom:20px;padding:0 8px;">
+      ${years.map(yr => {
+        const d   = yearMap[yr];
+        const pct = Math.round((d.attendances/maxAtt)*100);
+        const isCurrent = yr === String(new Date().getFullYear());
+        return `
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div style="font-size:12px;font-weight:700;color:var(--navy);">${d.attendances}</div>
+            <div style="width:100%;background:${isCurrent?'var(--amber-light)':'var(--navy-light)'};border-radius:8px 8px 0 0;height:${pct}%;min-height:8px;position:relative;overflow:hidden;transition:height .4s;">
+              <div style="position:absolute;inset:0;background:${isCurrent?'var(--amber)':'var(--navy)'};border-radius:8px 8px 0 0;opacity:0.85;"></div>
+            </div>
+            <div style="font-size:12px;font-weight:600;color:var(--ink);">${yr}${isCurrent?' *':''}</div>
+          </div>`;
+      }).join('')}
+    </div>
+    ${years.some(y=>y===String(new Date().getFullYear())) ? `<div style="font-size:11px;color:var(--mid);margin-bottom:16px;">* ${new Date().getFullYear()} is still in progress</div>` : ''}
+
+    <!-- Table -->
+    <table class="lb-table">
+      <thead><tr>
+        <th>Year</th>
+        <th style="text-align:center;">Attendances</th>
+        <th style="text-align:center;">Unique Volunteers</th>
+        <th style="text-align:center;">Events</th>
+        <th style="text-align:center;">Avg per Volunteer</th>
+      </tr></thead>
+      <tbody>
+        ${years.map(yr => {
+          const d   = yearMap[yr];
+          const avg = (d.attendances/d.names.size).toFixed(1);
+          const isCurrent = yr === String(new Date().getFullYear());
+          return `<tr>
+            <td style="font-weight:700;color:var(--navy);">${yr}${isCurrent?' <span style=\"font-size:10px;color:var(--mid);font-weight:400;\">ongoing</span>':''}</td>
+            <td style="text-align:center;font-weight:600;">${d.attendances}</td>
+            <td style="text-align:center;">${d.names.size}</td>
+            <td style="text-align:center;">${d.events.size}</td>
+            <td style="text-align:center;">${avg}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+
+  // ── Section 2: Beneficiary breakdown ─────────────────────
+  html += `
+  <div style="background:var(--white);border-radius:16px;padding:22px 24px;box-shadow:0 1px 6px var(--shadow);margin-bottom:20px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+      <div class="section-title">📍 Attendances by Beneficiary</div>
+      <div style="font-size:11px;color:var(--mid);background:var(--teal-light);padding:3px 10px;border-radius:100px;color:var(--teal);font-weight:600;">${coverage}% coverage</div>
+    </div>
+    <div style="font-size:12px;color:var(--mid);margin-bottom:20px;">Based on event names · ${100-coverage}% of records have generic event names (fill in Beneficiary column in Google Sheet to improve accuracy)</div>
+
+    <!-- Beneficiary bars -->
+    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px;">
+      ${benes.map(b => {
+        const pct  = Math.round((beneTotal[b]/maxBene)*100);
+        const col  = BCOLS[b] || 'var(--navy)';
+        return `
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+              <div style="font-size:13px;font-weight:600;color:var(--ink);">${b}</div>
+              <div style="font-size:13px;font-weight:700;color:${col};">${beneTotal[b].toLocaleString()} attendances</div>
+            </div>
+            <div style="height:10px;background:var(--border);border-radius:100px;overflow:hidden;">
+              <div style="height:100%;width:${pct}%;background:${col};border-radius:100px;transition:width .5s;"></div>
+            </div>
+          </div>`;
+      }).join('')}
+    </div>
+
+    <!-- Year breakdown table -->
+    <table class="lb-table">
+      <thead><tr>
+        <th>Beneficiary</th>
+        ${years.map(y=>`<th style="text-align:center;">${y}</th>`).join('')}
+        <th style="text-align:center;">Total</th>
+      </tr></thead>
+      <tbody>
+        ${benes.map(b => {
+          const col = BCOLS[b] || 'var(--navy)';
+          const yrCells = years.map(y => `<td style="text-align:center;">${beneYearMap[b]?.[y]||'—'}</td>`).join('');
+          return `<tr>
+            <td style="font-weight:700;color:${col};">${b}</td>
+            ${yrCells}
+            <td style="text-align:center;font-weight:700;color:${col};">${beneTotal[b]}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+
+  document.getElementById('ov-content').innerHTML = html;
+  document.getElementById('ov-loading').style.display = 'none';
+  document.getElementById('ov-content').style.display = 'block';
+}
+
+
+// ── Stats ────────────────────────────────────────────────────
+let statsRecs = null;
+
+const BENE_COLOURS = { AMK:'var(--rose)', BB:'var(--teal)', CSU:'var(--amber)', Woodlands:'var(--navy)' };
+const BENE_CLASS   = { AMK:'bene-amk', BB:'bene-bb', CSU:'bene-csu', Woodlands:'bene-wld' };
+const BENE_EMOJIS  = { AMK:'🏥', BB:'🏥', CSU:'🏥', Woodlands:'🏥' };
+const MANUAL_BENE  = {
+  'Apr Birthday Celebration':'CSU','Aug Birthday Celebration':'CSU',
+  'Feb Birthday Celebration':'CSU','Jul Birthday Celebration':'CSU',
+  'Oct Birthday Celebration':'CSU','Nov Birthday Celebration':'CSU',
+  'Dec Birthday Celebration':'CSU','Chinatown Outing':'BB',
+};
+const TBC_EVENTS = ['Zoo Outing','Singapore Flyer Outing','Jurong Lake Gardens Outing',
+  'Little India Outing','Vegetarian Fiesta','Deepavali Celebration','Deepavali Celebrations',
+  'Year end photo taking event','Family Portrait','Family Portrait and birthday celebration'];
+
+function inferBene(event, existing) {
+  if (existing && existing.trim()) {
+    const raw = existing.trim().toUpperCase();
+    const parts = [];
+    if (/\bAMK\b|ANG MO KIO/.test(raw)) parts.push('AMK');
+    if (/\bBB\b|\bBBNH\b|BUKIT BATOK/.test(raw)) parts.push('BB');
+    if (/\bWLD|WOODLANDS/.test(raw)) parts.push('Woodlands');
+    if (/\bCSU\b|CHRONIC/.test(raw)) parts.push('CSU');
+    return parts.length ? parts : null;
+  }
+  if (MANUAL_BENE[event]) return [MANUAL_BENE[event]];
+  const e = (event || '').toUpperCase();
+  const parts = [];
+  if (/\bAMK\b|ANG MO KIO|AMKNH/.test(e)) parts.push('AMK');
+  if (/\bBB\b|\bBBNH\b|BUKIT BATOK/.test(e)) parts.push('BB');
+  if (/\bWLD\b|\bWLDS\b|WOODLANDS/.test(e)) parts.push('Woodlands');
+  if (/\bCSU\b|CHRONIC SICK/.test(e)) parts.push('CSU');
+  return parts.length ? parts : null;
+}
+
+async function loadStats(force = false) {
+  if (statsRecs && !force) { renderStats(); return; }
+  document.getElementById('stats-loading').style.display  = 'block';
+  document.getElementById('stats-content').style.display  = 'none';
+  try {
+    const res  = await fetch(`${API}?action=getAllRecords`, { redirect:'follow' });
+    const data = await res.json();
+    statsRecs  = data.records || [];
+    renderStats();
+  } catch(e) {
+    document.getElementById('stats-loading').textContent = '⚠️ Could not load data.';
+  }
+}
+
+function renderStats() {
+  const years = [...new Set(statsRecs.map(r => String(r.Year)))].filter(Boolean).sort();
+
+  // Build yearly totals
+  const yearlyMap = {};
+  years.forEach(y => { yearlyMap[y] = { attendances:0, volunteers:new Set(), events:new Set() }; });
+  statsRecs.forEach(r => {
+    const y = String(r.Year);
+    if (!yearlyMap[y]) return;
+    yearlyMap[y].attendances++;
+    yearlyMap[y].volunteers.add(r.Name);
+    yearlyMap[y].events.add(r.Event);
+  });
+  const yearly = years.map(y => ({
+    year: y,
+    attendances: yearlyMap[y].attendances,
+    volunteers:  yearlyMap[y].volunteers.size,
+    events:      yearlyMap[y].events.size,
+  }));
+
+  // Build bene x year
+  const beneMap = {};  // "year|bene" -> { att, evts }
+  statsRecs.forEach(r => {
+    const y    = String(r.Year);
+    const benes = inferBene(r.Event, r.Beneficiary);
+    if (!benes) return;
+    benes.forEach(b => {
+      const key = `${y}|${b}`;
+      if (!beneMap[key]) beneMap[key] = { att:0, evts:new Set() };
+      beneMap[key].att++;
+      beneMap[key].evts.add(r.Event);
+    });
+  });
+
+  const benes    = ['AMK','BB','CSU','Woodlands'];
+  const maxAtt   = Math.max(...yearly.map(y => y.attendances));
+  const maxVol   = Math.max(...yearly.map(y => y.volunteers));
+  const coverage = Math.round(statsRecs.filter(r => inferBene(r.Event, r.Beneficiary)).length / statsRecs.length * 100);
+
+  // ── Render ──
+  let html = '';
+
+  // Yearly chart + table
+  html += `<div class="chart-card" style="margin-bottom:16px;">
+    <div class="chart-title">📅 Yearly Attendance Overview</div>
+    <div class="chart-sub">Total attendances, unique volunteers and events per year</div>
+
+    <div class="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:var(--navy)"></div>Attendances</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--teal)"></div>Volunteers</div>
+    </div>
+
+    <div class="bar-wrap" style="margin-bottom:20px;">
+      ${yearly.map(y => {
+        const w = Math.round(y.attendances/maxAtt*100);
+        const prev = yearly.find(p => String(parseInt(p.year)-1) === String(parseInt(y.year)-1));
+        return `
+          <div class="bar-row">
+            <div class="bar-label">${y.year}</div>
+            <div class="bar-track">
+              <div class="bar-fill bene-yr" style="width:${w}%">
+                <span class="bar-val">${y.attendances}</span>
+              </div>
+            </div>
+            <span style="font-size:11px;color:var(--mid);width:80px;flex-shrink:0;">
+              👥 ${y.volunteers} · 🗓️ ${y.events}
+            </span>
+          </div>`;
+      }).join('')}
+    </div>
+
+    <table class="stat-table">
+      <thead><tr>
+        <th>Year</th><th>Attendances</th><th>Volunteers</th><th>Events</th><th>Avg per Volunteer</th>
+      </tr></thead>
+      <tbody>
+        ${yearly.map((y, i) => {
+          const avg  = (y.attendances / y.volunteers).toFixed(1);
+          const prev = yearly[i-1];
+          const diff = prev ? y.attendances - prev.attendances : null;
+          const diffHTML = diff !== null
+            ? `<span class="${diff>=0?'growth-up':'growth-down'}">${diff>=0?'+':''}${diff}</span>`
+            : '';
+          return `<tr>
+            <td><strong>${y.year}</strong></td>
+            <td>${y.attendances} ${diffHTML}</td>
+            <td>${y.volunteers}</td>
+            <td>${y.events}</td>
+            <td>${avg}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+
+  // Beneficiary breakdown
+  html += `<div class="chart-card" style="margin-bottom:16px;">
+    <div class="chart-title">🏥 Attendances by Beneficiary and Year</div>
+    <div class="chart-sub">How many attendances each nursing home received per year · ${coverage}% of records have beneficiary data</div>
+
+    <div class="legend">
+      ${benes.map(b => `<div class="leg-item"><div class="leg-dot ${BENE_CLASS[b]}"></div>${b}</div>`).join('')}
+    </div>
+
+    <div class="stat-grid" style="margin-bottom:16px;">
+      ${years.map(y => {
+        const maxYrAtt = Math.max(...benes.map(b => beneMap[`${y}|${b}`]?.att || 0));
+        return `
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:10px;">📅 ${y}</div>
+            <div class="bar-wrap">
+              ${benes.map(b => {
+                const val = beneMap[`${y}|${b}`]?.att || 0;
+                const evts = beneMap[`${y}|${b}`]?.evts.size || 0;
+                const w   = maxYrAtt ? Math.round(val/maxYrAtt*100) : 0;
+                return `<div class="bar-row">
+                  <div class="bar-label">${b}</div>
+                  <div class="bar-track">
+                    <div class="bar-fill ${BENE_CLASS[b]}" style="width:${w}%">
+                      ${val > 0 ? `<span class="bar-val">${val}</span>` : ''}
+                    </div>
+                  </div>
+                  <span style="font-size:11px;color:var(--mid);">${evts > 0 ? evts + ' evt' : '—'}</span>
+                </div>`;
+              }).join('')}
+            </div>
+          </div>`;
+      }).join('')}
+    </div>
+
+    <table class="stat-table">
+      <thead><tr>
+        <th>Beneficiary</th>
+        ${years.map(y => `<th style="text-align:center;">${y}</th>`).join('')}
+        <th style="text-align:center;">Total</th>
+      </tr></thead>
+      <tbody>
+        ${benes.map(b => {
+          const totals = years.map(y => beneMap[`${y}|${b}`]?.att || 0);
+          const grand  = totals.reduce((a,c) => a+c, 0);
+          return `<tr>
+            <td><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${BENE_COLOURS[b]};margin-right:6px;vertical-align:middle;"></span><strong>${b}</strong></td>
+            ${totals.map(t => `<td style="text-align:center;">${t || '—'}</td>`).join('')}
+            <td style="text-align:center;font-weight:600;">${grand}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+
+    <div class="tbc-note">
+      ⚠️ ${TBC_EVENTS.length} events still need beneficiary assignment: ${TBC_EVENTS.join(', ')}. Fill these in and refresh to improve accuracy.
+    </div>
+  </div>`;
+
+  document.getElementById('stats-content').innerHTML = html;
+  document.getElementById('stats-loading').style.display = 'none';
+  document.getElementById('stats-content').style.display = 'block';
+}
 
 // ── Yearly Analysis ──────────────────────────────────────────
 let yearlyRecs = null;
